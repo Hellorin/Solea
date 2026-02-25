@@ -1,0 +1,378 @@
+.page {
+  min-height: 100dvh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 56px 24px 20px;
+}
+
+.backBtn {
+  color: var(--sage);
+  font-size: 15px;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.title {
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.progressLine {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.progressBar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--sage);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.content {
+  flex: 1;
+  padding: 0 20px 100px;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Pre-cycle */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+}
+
+.toggleLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.toggleIcon {
+  font-size: 18px;
+  margin-bottom: 2px;
+}
+
+.toggleNote {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.toggle {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  background: var(--border);
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.toggle.toggleOn {
+  background: var(--sage);
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.toggleOn .toggleThumb {
+  transform: translateX(20px);
+}
+
+.statsCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-family: 'DM Serif Display', serif;
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.statDivider {
+  width: 1px;
+  height: 40px;
+  background: var(--border);
+}
+
+/* Running */
+
+.exerciseImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 20px;
+  background: var(--bg);
+}
+
+.exerciseName {
+  color: var(--text);
+  margin: 0;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--sage);
+  background: rgba(123, 175, 142, 0.1);
+  padding: 4px 12px;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+
+.steps {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.tip {
+  font-size: 14px;
+  color: var(--text-muted);
+  background: var(--surface);
+  padding: 12px 16px;
+  border-radius: 12px;
+  line-height: 1.5;
+}
+
+.tip strong {
+  color: var(--sage);
+}
+
+.timers {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.timerBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.timerValue {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-family: 'DM Serif Display', serif;
+  line-height: 1;
+}
+
+.timerLabel {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.timerDivider {
+  width: 1px;
+  height: 36px;
+  background: var(--border);
+}
+
+.runActions {
+  display: flex;
+  gap: 12px;
+}
+
+.runActions .btnPrimary {
+  flex: 1;
+}
+
+/* Buttons */
+
+.btnPrimary {
+  background: var(--sage);
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 16px 32px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  width: 100%;
+}
+
+.btnPrimary:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+.btnSecondary {
+  background: var(--surface);
+  color: var(--sage);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 16px 32px;
+  border-radius: 50px;
+  border: 2px solid var(--sage);
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s ease, transform 0.15s ease;
+  width: 100%;
+}
+
+.btnSecondary:active {
+  transform: scale(0.97);
+  background: rgba(123, 175, 142, 0.08);
+}
+
+.btnPause {
+  background: var(--surface);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 16px 20px;
+  border-radius: 50px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.btnPause:active {
+  transform: scale(0.97);
+}
+
+.skipBtn {
+  background: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  padding: 4px;
+  transition: color 0.15s ease;
+}
+
+.skipBtn:hover {
+  color: var(--text);
+}
+
+/* Done */
+
+.doneHero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 0 16px;
+  text-align: center;
+}
+
+.doneEmoji {
+  font-size: 52px;
+  line-height: 1;
+}
+
+.doneTitle {
+  color: var(--text);
+  margin: 0;
+}
+
+.doneSub {
+  color: var(--text-muted);
+  font-size: 15px;
+}
