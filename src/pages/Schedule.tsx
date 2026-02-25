@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import TimeSlot from '../components/TimeSlot';
 import { loadTimes, saveTimes } from '../utils/storage';
+import { scheduleNotifications, supportsScheduledNotifications } from '../utils/notifications';
 import styles from './Schedule.module.css';
 
 export default function Schedule() {
@@ -45,6 +46,7 @@ export default function Schedule() {
     const newTimes = [...times, inputValue].sort();
     setTimes(newTimes);
     saveTimes(newTimes);
+    scheduleNotifications(newTimes);
     setInputValue('');
     setShowInput(false);
   }
@@ -53,6 +55,7 @@ export default function Schedule() {
     const newTimes = times.filter(t => t !== time);
     setTimes(newTimes);
     saveTimes(newTimes);
+    scheduleNotifications(newTimes);
   }
 
   return (
@@ -120,7 +123,10 @@ export default function Schedule() {
             <line x1="12" y1="8" x2="12" y2="12"/>
             <line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
-          <p>Reminders fire while the app is running in the background. If you fully close it, reminders won't appear until you reopen it.</p>
+          {supportsScheduledNotifications()
+            ? <p>Reminders are scheduled 30 days ahead and will fire even when the app is closed.</p>
+            : <p>Your browser doesn't support background notifications. Keep the app open for reminders to work.</p>
+          }
         </div>
       </div>
     </div>

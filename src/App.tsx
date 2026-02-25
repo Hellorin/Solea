@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import Schedule from './pages/Schedule';
@@ -7,7 +7,7 @@ import Cycle from './pages/Cycle';
 import Stats from './pages/Stats';
 import BottomNav from './components/BottomNav';
 import { loadTimes } from './utils/storage';
-import { requestPermission, startReminderChecker } from './utils/notifications';
+import { requestPermission, scheduleNotifications } from './utils/notifications';
 import styles from './App.module.css';
 
 function AnimatedRoutes() {
@@ -27,40 +27,12 @@ function AnimatedRoutes() {
 }
 
 export default function App() {
-  const [times, setTimes] = useState<string[]>([]);
-  const cleanupRef = useRef<(() => void) | null>(null);
-
   useEffect(() => {
-    const saved = loadTimes();
-    setTimes(saved);
-    requestPermission();
-  }, []);
-
-  useEffect(() => {
-    if (cleanupRef.current) cleanupRef.current();
-    cleanupRef.current = startReminderChecker(times);
-    return () => { if (cleanupRef.current) cleanupRef.current(); };
-  }, [times]);
-
-  // Listen for storage changes from Schedule page
-  useEffect(() => {
-    function handleStorage() {
-      setTimes(loadTimes());
-    }
-    window.addEventListener('storage', handleStorage);
-    // Also poll every 5s to catch same-tab changes.
-    // Use functional update and bail out when content hasn't changed,
-    // otherwise the checker effect would restart on every poll tick.
-    const poll = setInterval(() => {
-      const fresh = loadTimes();
-      setTimes(prev =>
-        JSON.stringify(prev) === JSON.stringify(fresh) ? prev : fresh
-      );
-    }, 5000);
-    return () => {
-      window.removeEventListener('storage', handleStorage);
-      clearInterval(poll);
-    };
+    // On startup, request notification permission then refresh the 30-day schedule
+    // so the rolling window stays current even if the user hasn't opened the app in a while.
+    requestPermission().then(granted => {
+      if (granted) scheduleNotifications(loadTimes());
+    });
   }, []);
 
   return (

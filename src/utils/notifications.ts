@@ -4,22 +4,51 @@ export async function requestPermission(): Promise<boolean> {
   return result === 'granted';
 }
 
-function checkAndNotify(times: string[]) {
-  const now = new Date();
-  const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-  if (times.includes(hhmm) && Notification.permission === 'granted') {
-    navigator.serviceWorker.ready.then(reg => {
-      reg.showNotification('Time to stretch! 🦶', {
-        body: 'A quick plantar fascia stretch now can save you pain later.',
-        icon: '/icons/icon-192.png',
-        tag: 'stretch-reminder',
-      });
-    });
-  }
+export function supportsScheduledNotifications(): boolean {
+  return 'TimestampTrigger' in window;
 }
 
-export function startReminderChecker(times: string[]): () => void {
-  checkAndNotify(times); // immediate check in case app opened at reminder minute
-  const interval = setInterval(() => checkAndNotify(times), 60_000);
-  return () => clearInterval(interval);
+const DAYS_AHEAD = 30;
+
+/**
+ * Pre-schedule notifications for every reminder time over the next DAYS_AHEAD days.
+ * Uses the Notification Triggers API (Chrome/Chromium) so notifications fire even
+ * when the app is fully closed.
+ * Clears any previously scheduled notifications before rescheduling.
+ */
+export async function scheduleNotifications(times: string[]): Promise<void> {
+  if (!('serviceWorker' in navigator) || !supportsScheduledNotifications()) return;
+  if (Notification.permission !== 'granted') return;
+
+  const reg = await navigator.serviceWorker.ready;
+
+  // Clear all previously scheduled (pending-trigger) notifications.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const existing: Notification[] = await (reg as any).getNotifications({ includeTriggered: true });
+  existing.forEach(n => n.close());
+
+  if (times.length === 0) return;
+
+  const now = Date.now();
+
+  for (const time of times) {
+    const [hours, minutes] = time.split(':').map(Number);
+
+    for (let day = 0; day < DAYS_AHEAD; day++) {
+      const trigger = new Date();
+      trigger.setDate(trigger.getDate() + day);
+      trigger.setHours(hours, minutes, 0, 0);
+
+      if (trigger.getTime() <= now) continue; // already passed, skip
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (reg as any).showNotification('Time to stretch! 🦶', {
+        body: 'A quick plantar fascia stretch now can save you pain later.',
+        icon: '/icons/icon-192.png',
+        tag: `stretch-${time.replace(':', '')}-d${day}`,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        showTrigger: new (window as any).TimestampTrigger(trigger.getTime()),
+      });
+    }
+  }
 }
