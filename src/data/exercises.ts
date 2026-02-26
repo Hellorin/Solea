@@ -10,6 +10,7 @@ export interface Exercise {
   instructions: string[];
   tip?: string;
   acuteWarning?: string;
+  equipment?: string[];
 }
 
 export const exercises: Exercise[] = [
@@ -41,6 +42,7 @@ export const exercises: Exercise[] = [
       'Gently pull the towel toward you, keeping your knee straight.',
       'Feel the stretch through your arch and calf.',
     ],
+    equipment: ['Towel'],
   },
   {
     id: 'calf-straight',
@@ -130,6 +132,7 @@ export const exercises: Exercise[] = [
     ],
     tip: 'The cold helps reduce local inflammation while the rolling releases fascial tension. Best used after activity or at end of day.',
     acuteWarning: 'Keep pressure light during the acute phase. Stop if pain increases.',
+    equipment: ['Frozen water bottle'],
   },
   {
     id: 'toe-scrunch',
@@ -145,6 +148,7 @@ export const exercises: Exercise[] = [
       'Then smooth the towel back out and repeat.',
     ],
     tip: 'Activates intrinsic foot muscles that support the arch without loading the fascia directly.',
+    equipment: ['Towel'],
   },
   {
     id: 'heel-raise',
@@ -160,6 +164,7 @@ export const exercises: Exercise[] = [
       'Lower slowly and repeat. Keep movement pain-free.',
     ],
     acuteWarning: 'Seated only during the acute phase. Do not progress to standing until pain significantly reduces.',
+    equipment: ['Chair'],
   },
   {
     id: 'short-foot',
@@ -193,6 +198,7 @@ export const exercises: Exercise[] = [
     ],
     tip: 'This is the most evidence-backed exercise for plantar fasciitis. Some discomfort during the exercise is expected — stop only if pain is sharp or severe.',
     acuteWarning: 'Begin only once you can walk without a severe limp. Start with both feet lowering if single-leg is too intense.',
+    equipment: ['Step or stair edge'],
   },
   {
     id: 'standing-heel-raise',
@@ -241,6 +247,7 @@ export const exercises: Exercise[] = [
     ],
     tip: 'A golf ball gives more targeted pressure; a tennis ball is gentler. Use whichever is comfortable. Great to keep under your desk.',
     acuteWarning: 'Stay seated and keep pressure light during the acute phase.',
+    equipment: ['Tennis ball or golf ball'],
   },
   {
     id: 'marble-pickups',
@@ -255,6 +262,7 @@ export const exercises: Exercise[] = [
       'Focus on gripping with all toes, especially the big toe.',
     ],
     tip: 'No marbles? Use small pebbles, crumpled paper balls, or even a pen. Targets the same intrinsic muscles as toe scrunches but with more challenge and coordination.',
+    equipment: ['Marbles', 'Small bowl'],
   },
   {
     id: 'clamshell',

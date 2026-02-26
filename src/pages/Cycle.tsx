@@ -1,5 +1,5 @@
 import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useWakeLock } from '../hooks/useWakeLock';
 import { PRESETS, getPresetExercises, getCustomCycleExercises } from '../data/cycles';
 import type { CyclePreset, CustomCycle } from '../data/cycles';
@@ -8,7 +8,7 @@ import { saveSession } from '../utils/history';
 import { loadCustomCycles, deleteCustomCycle, renameCustomCycle } from '../utils/customCycles';
 import styles from './Cycle.module.css';
 
-type View = 'pick' | 'running' | 'done';
+type View = 'pick' | 'equipment' | 'running' | 'done';
 
 const categoryClass: Record<string, string> = {
   stretching: 'catStretching',
@@ -29,8 +29,20 @@ function resolveList(cycle: CyclePreset | CustomCycle): Exercise[] {
   return getCustomCycleExercises(cycle);
 }
 
+function getUniqueEquipment(exercises: Exercise[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const ex of exercises) {
+    for (const item of ex.equipment ?? []) {
+      if (!seen.has(item)) { seen.add(item); result.push(item); }
+    }
+  }
+  return result;
+}
+
 export default function Cycle() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [view, setView] = useState<View>('pick');
   const [activeCycle, setActiveCycle] = useState<CyclePreset | CustomCycle | null>(null);
   const [customCycles, setCustomCycles] = useState<CustomCycle[]>(() => loadCustomCycles());
@@ -68,6 +80,15 @@ export default function Cycle() {
     return () => pauseTick();
   }, []);
 
+  useEffect(() => {
+    const id = (location.state as { quickStart?: string } | null)?.quickStart;
+    if (id) {
+      const preset = PRESETS.find(p => p.id === id);
+      if (preset) handleStart(preset);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function handleStart(cycle: CyclePreset | CustomCycle) {
     setActiveCycle(cycle);
     setCurrentIndex(0);
@@ -76,6 +97,16 @@ export default function Cycle() {
     setReady(false);
     readyRef.current = false;
     setPaused(false);
+    const equipment = getUniqueEquipment(resolveList(cycle));
+    if (equipment.length > 0) {
+      setView('equipment');
+    } else {
+      setView('running');
+      startTick();
+    }
+  }
+
+  function handleEquipmentReady() {
     setView('running');
     startTick();
   }
@@ -279,6 +310,42 @@ export default function Cycle() {
     );
   }
 
+  // EQUIPMENT VIEW
+  if (view === 'equipment') {
+    const equipment = getUniqueEquipment(list);
+    return (
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <button className={styles.backBtn} onClick={handlePickCycle}>← Back</button>
+        </div>
+        <div className={styles.content}>
+          <div className={styles.equipmentScreen}>
+            <span className={styles.equipmentHeroEmoji}>🎒</span>
+            <h1 className={styles.equipmentTitle}>Grab your equipment</h1>
+            <p className={styles.equipmentCycleName}>{activeCycle?.emoji} {activeCycle?.label}</p>
+            <p className={styles.equipmentSub}>
+              This cycle needs a few items. Take a moment to gather them before you start.
+            </p>
+            <ul className={styles.equipmentList}>
+              {equipment.map((item) => (
+                <li key={item} className={styles.equipmentItem}>
+                  <span className={styles.equipmentCheck}>✓</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <button className={styles.btnPrimary} onClick={handleEquipmentReady}>
+            Got it, let's go!
+          </button>
+          <button className={styles.btnSecondary} onClick={handlePickCycle}>
+            Choose a different cycle
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // RUNNING VIEW
   if (view === 'running') {
     const ex = list[currentIndex];
@@ -310,6 +377,14 @@ export default function Cycle() {
             <span className={styles.badge}>{ex.duration}</span>
             <span className={styles.badge}>{ex.reps}</span>
           </div>
+
+          {ex.equipment && ex.equipment.length > 0 && (
+            <div className={styles.equipmentRow}>
+              {ex.equipment.map((item) => (
+                <span key={item} className={styles.equipmentBadge}>🔧 {item}</span>
+              ))}
+            </div>
+          )}
 
           <ol className={styles.steps}>
             {ex.instructions.map((step, i) => (

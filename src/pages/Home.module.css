@@ -95,6 +95,79 @@
   font-family: 'DM Serif Display', serif;
 }
 
+.quickStartCard {
+  background: var(--surface);
+  border: 1.5px solid var(--sage);
+  border-radius: 24px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.quickStartLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.quickStartEmoji {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.quickStartText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.quickStartLabel {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.quickStartTagline {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.quickStartCount {
+  font-size: 11px;
+  color: var(--sage);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.quickStartBtn {
+  background: var(--sage);
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 22px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.quickStartBtn:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
 .actions {
   display: flex;
   flex-direction: column;

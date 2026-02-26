@@ -557,6 +557,89 @@
   background: rgba(123, 175, 142, 0.08);
 }
 
+/* Equipment screen */
+
+.equipmentScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 0 8px;
+  text-align: center;
+}
+
+.equipmentHeroEmoji {
+  font-size: 52px;
+  line-height: 1;
+}
+
+.equipmentTitle {
+  color: var(--text);
+  margin: 0;
+}
+
+.equipmentCycleName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--sage);
+  margin: 4px 0 0;
+}
+
+.equipmentSub {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.5;
+  max-width: 280px;
+}
+
+.equipmentList {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.equipmentItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.equipmentCheck {
+  font-size: 16px;
+  color: var(--sage);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Equipment badges in running view */
+
+.equipmentRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.equipmentBadge {
+  font-size: 12px;
+  font-weight: 500;
+  color: #8A6A3A;
+  background: rgba(192, 137, 90, 0.12);
+  padding: 4px 12px;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+
 /* Done */
 
 .doneHero {

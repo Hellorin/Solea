@@ -76,3 +76,9 @@ export function getCustomCycleExercises(cycle: CustomCycle): Exercise[] {
     .map(id => exercises.find(e => e.id === id))
     .filter((e): e is Exercise => e !== undefined);
 }
+
+export function getQuickStartPreset(hour: number): CyclePreset {
+  if (hour >= 5 && hour < 10) return PRESETS.find(p => p.id === 'morning')!;
+  if (hour >= 10 && hour < 18) return PRESETS.find(p => p.id === 'anytime')!;
+  return PRESETS.find(p => p.id === 'evening')!;
+}

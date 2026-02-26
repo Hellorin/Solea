@@ -34,6 +34,11 @@ export default function ExerciseCard({ exercise }: Props) {
           <div className={styles.meta}>
             <span className={styles.badge}>{exercise.duration}</span>
             <span className={styles.badge}>{exercise.reps}</span>
+            {exercise.equipment && exercise.equipment.length > 0 && (
+              exercise.equipment.map((item) => (
+                <span key={item} className={styles.equipmentBadge}>🔧 {item}</span>
+              ))
+            )}
           </div>
 
           <ol className={styles.steps}>

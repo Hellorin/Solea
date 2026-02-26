@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { loadTimes } from '../utils/storage';
 import { requestPermission } from '../utils/notifications';
 import { getGreeting, getNextReminder } from '../utils/reminderUtils';
+import { getQuickStartPreset, getPresetExercises } from '../data/cycles';
 import styles from './Home.module.css';
 
 export default function Home() {
@@ -18,6 +19,8 @@ export default function Home() {
   }, []);
 
   const nextReminder = getNextReminder(times, new Date());
+  const quickStartCycle = getQuickStartPreset(new Date().getHours());
+  const quickStartExercises = getPresetExercises(quickStartCycle);
 
   async function handlePermissionBanner() {
     const granted = await requestPermission();
@@ -68,6 +71,23 @@ export default function Home() {
             <p className={styles.statLabel}>Today's reminders</p>
             <p className={styles.statValue}>{times.length}</p>
           </div>
+        </div>
+
+        <div className={styles.quickStartCard}>
+          <div className={styles.quickStartLeft}>
+            <span className={styles.quickStartEmoji}>{quickStartCycle.emoji}</span>
+            <div className={styles.quickStartText}>
+              <span className={styles.quickStartLabel}>{quickStartCycle.label}</span>
+              <span className={styles.quickStartTagline}>{quickStartCycle.tagline}</span>
+              <span className={styles.quickStartCount}>{quickStartExercises.length} exercises</span>
+            </div>
+          </div>
+          <button
+            className={styles.quickStartBtn}
+            onClick={() => navigate('/cycle', { state: { quickStart: quickStartCycle.id } })}
+          >
+            Start
+          </button>
         </div>
 
         <div className={styles.actions}>

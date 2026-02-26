@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PRESETS, getPresetExercises } from '../data/cycles';
+import { PRESETS, getPresetExercises, getQuickStartPreset } from '../data/cycles';
 import { exercises } from '../data/exercises';
 
 describe('getPresetExercises', () => {
@@ -45,5 +45,35 @@ describe('getPresetExercises', () => {
         expect(exerciseIds.has(id), `Exercise ID "${id}" in preset "${preset.id}" not found`).toBe(true);
       }
     }
+  });
+});
+
+describe('getQuickStartPreset', () => {
+  it('hour 5 → morning', () => {
+    expect(getQuickStartPreset(5).id).toBe('morning');
+  });
+
+  it('hour 9 → morning', () => {
+    expect(getQuickStartPreset(9).id).toBe('morning');
+  });
+
+  it('hour 10 → anytime', () => {
+    expect(getQuickStartPreset(10).id).toBe('anytime');
+  });
+
+  it('hour 17 → anytime', () => {
+    expect(getQuickStartPreset(17).id).toBe('anytime');
+  });
+
+  it('hour 18 → evening', () => {
+    expect(getQuickStartPreset(18).id).toBe('evening');
+  });
+
+  it('hour 0 → evening', () => {
+    expect(getQuickStartPreset(0).id).toBe('evening');
+  });
+
+  it('hour 4 → evening', () => {
+    expect(getQuickStartPreset(4).id).toBe('evening');
   });
 });
