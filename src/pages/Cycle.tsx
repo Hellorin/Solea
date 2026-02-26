@@ -464,6 +464,7 @@ export default function Cycle() {
 
           <button className={styles.btnPrimary} onClick={handleRestart}>Start Again</button>
           <button className={styles.btnSecondary} onClick={handlePickCycle}>Choose Cycle</button>
+          <button className={styles.btnSecondary} onClick={() => navigate('/')}>Go Home</button>
         </div>
       </div>
     );
