@@ -25,21 +25,43 @@ export const PRESETS: CyclePreset[] = [
     label: 'Morning',
     emoji: '🌅',
     tagline: 'Before your first steps — reduces that sharp morning pain',
-    exerciseIds: ['toe-extension', 'towel-stretch', 'calf-straight', 'calf-bent', 'ankle-circles'],
+    exerciseIds: [
+      'toe-extension',    // plantar fascia stretch before standing
+      'ankle-circles',    // gentle warm-up
+      'towel-stretch',    // calf + arch lengthening
+      'calf-straight',    // gastrocnemius release
+      'calf-bent',        // soleus release
+      'knee-to-wall',     // dorsiflexion mobility — key for morning stiffness
+    ],
   },
   {
     id: 'anytime',
-    label: 'Anytime',
-    emoji: '🌿',
-    tagline: 'General maintenance — fits into any part of your day',
-    exerciseIds: ['calf-straight', 'calf-bent', 'ankle-alphabet', 'toe-spread'],
+    label: 'Rehab',
+    emoji: '💪',
+    tagline: 'Core strengthening — do this daily to rebuild the foot and hip',
+    exerciseIds: [
+      'eccentric-heel-drop',   // Alfredson protocol — gold standard
+      'standing-heel-raise',   // progressive load
+      'short-foot',            // intrinsic arch activation
+      'toe-spread',            // neuromuscular control
+      'clamshell',             // hip abductor — corrects faulty load patterns
+      'ankle-alphabet',        // joint mobility maintenance
+    ],
   },
   {
     id: 'evening',
     label: 'Evening',
     emoji: '🌙',
     tagline: 'Wind down and recover after a day on your feet',
-    exerciseIds: ['bottle-roll', 'calf-straight', 'calf-bent', 'toe-scrunch', 'heel-raise', 'short-foot'],
+    exerciseIds: [
+      'tennis-ball-roll',  // accessible self-massage
+      'bottle-roll',       // cold + fascial release
+      'calf-straight',     // end-of-day calf release
+      'calf-bent',         // soleus release
+      'toe-scrunch',       // intrinsic muscle activation
+      'marble-pickups',    // coordination + intrinsic strength
+      'heel-raise',        // seated — gentle close-out
+    ],
   },
 ];
 

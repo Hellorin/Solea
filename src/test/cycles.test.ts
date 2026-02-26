@@ -24,10 +24,10 @@ describe('getPresetExercises', () => {
     resolved.forEach(ex => expect(ex).toBeDefined());
   });
 
-  it('morning preset contains exactly 5 exercises', () => {
+  it('morning preset contains exactly 6 exercises', () => {
     const morning = PRESETS.find(p => p.id === 'morning')!;
     const resolved = getPresetExercises(morning);
-    expect(resolved).toHaveLength(5);
+    expect(resolved).toHaveLength(6);
   });
 
   it('resolved exercise IDs match the preset IDs (no silent drops)', () => {
