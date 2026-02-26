@@ -45,10 +45,14 @@ npm run dev       # dev server at localhost:5173
 npm test          # launch vite tests
 npm run build     # TypeScript check + Vite build → dist/
 npm run preview   # serve the built dist/
-npx vercel        # deploy to preview environment on vercel
-npx vercel --prod # deploy to prod environment on vercel
 ```
 
 ## Verification after code generation
 1. Write unit tests to validate the code generated
 2. Verify by opening a browser that all features are actually well implemented and as expected.
+
+# Preview and Prod environment
+```bash
+npx vercel        # deploy to preview environment on vercel
+npx vercel --prod # deploy to prod environment on vercel
+```
