@@ -17,7 +17,7 @@ export const PRESETS: CyclePreset[] = [
     label: 'Morning',
     emoji: '🌅',
     tagline: 'Before your first steps — reduces that sharp morning pain',
-    exerciseIds: ['toe-extension', 'towel-stretch', 'ankle-circles', 'calf-straight', 'calf-bent'],
+    exerciseIds: ['toe-extension', 'towel-stretch', 'calf-straight', 'calf-bent', 'ankle-circles'],
   },
   {
     id: 'anytime',

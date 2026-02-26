@@ -7,6 +7,12 @@ import styles from './Cycle.module.css';
 
 type View = 'pick' | 'running' | 'done';
 
+const categoryClass: Record<string, string> = {
+  stretching: 'catStretching',
+  mobility: 'catMobility',
+  strengthening: 'catStrengthening',
+};
+
 function fmt(secs: number): string {
   const m = Math.floor(secs / 60).toString().padStart(2, '0');
   const s = (secs % 60).toString().padStart(2, '0');
@@ -22,6 +28,7 @@ export default function Cycle() {
   const [exSecs, setExSecs] = useState(0);
   const [paused, setPaused] = useState(false);
   const [ready, setReady] = useState(false);
+  const [expandedPreset, setExpandedPreset] = useState<string | null>(null);
   const readyRef = useRef(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -125,11 +132,27 @@ export default function Cycle() {
                     <span className={styles.presetTagline}>{preset.tagline}</span>
                   </div>
                 </div>
-                <div className={styles.presetMeta}>
+                <button
+                  className={styles.presetMetaToggle}
+                  onClick={() => setExpandedPreset(expandedPreset === preset.id ? null : preset.id)}
+                >
                   <span>{exList.length} exercises</span>
                   <span className={styles.presetMetaDot}>·</span>
                   <span>~{estMins} min</span>
-                </div>
+                  <span className={`${styles.chevron} ${expandedPreset === preset.id ? styles.chevronOpen : ''}`}>›</span>
+                </button>
+                {expandedPreset === preset.id && (
+                  <div className={styles.exerciseList}>
+                    {exList.map(ex => (
+                      <div key={ex.id} className={styles.exerciseListItem}>
+                        <span className={styles.exerciseListName}>{ex.name}</span>
+                        <span className={`${styles.categoryTag} ${styles[categoryClass[ex.category]]}`}>
+                          {ex.category}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <button className={styles.btnPrimary} onClick={() => handleStart(preset)}>
                   Start
                 </button>

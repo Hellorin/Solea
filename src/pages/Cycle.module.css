@@ -107,17 +107,83 @@
   line-height: 1.4;
 }
 
-.presetMeta {
+.presetMetaToggle {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 13px;
   font-weight: 500;
   color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
 }
 
 .presetMetaDot {
   color: var(--border);
+}
+
+.chevron {
+  font-size: 16px;
+  line-height: 1;
+  color: var(--text-muted);
+  transform: rotate(90deg);
+  transition: transform 0.2s ease;
+  margin-left: auto;
+}
+
+.chevronOpen {
+  transform: rotate(270deg);
+}
+
+.exerciseList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.exerciseListItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.exerciseListName {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.3;
+  flex: 1;
+}
+
+.categoryTag {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 2px 8px;
+  border-radius: 50px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.catStretching {
+  color: #7BAF8E;
+  background: rgba(123, 175, 142, 0.12);
+}
+
+.catMobility {
+  color: #6A8FBF;
+  background: rgba(106, 143, 191, 0.12);
+}
+
+.catStrengthening {
+  color: #C0895A;
+  background: rgba(192, 137, 90, 0.12);
 }
 
 /* Pre-cycle */
