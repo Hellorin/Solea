@@ -1,5 +1,6 @@
 import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useWakeLock } from '../hooks/useWakeLock';
 import { PRESETS, getPresetExercises, getCustomCycleExercises } from '../data/cycles';
 import type { CyclePreset, CustomCycle } from '../data/cycles';
 import type { Exercise } from '../data/exercises';
@@ -43,6 +44,9 @@ export default function Cycle() {
   const [renameValue, setRenameValue] = useState('');
   const readyRef = useRef(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const wakeLockActive = view === 'running' && !paused;
+  useWakeLock(wakeLockActive);
 
   const list = activeCycle ? resolveList(activeCycle) : [];
 
