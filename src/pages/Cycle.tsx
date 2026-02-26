@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PRESETS, CyclePreset, getPresetExercises } from '../data/cycles';
+import { PRESETS, getPresetExercises } from '../data/cycles';
+import type { CyclePreset } from '../data/cycles';
 import { saveSession } from '../utils/history';
 import styles from './Cycle.module.css';
 
