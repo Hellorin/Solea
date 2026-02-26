@@ -1,11 +1,11 @@
 export async function requestPermission(): Promise<boolean> {
-  if (!('Notification' in window)) return false;
+  if (!('Notification' in globalThis)) return false;
   const result = await Notification.requestPermission();
   return result === 'granted';
 }
 
 export function supportsScheduledNotifications(): boolean {
-  return 'TimestampTrigger' in window;
+  return 'TimestampTrigger' in globalThis;
 }
 
 const DAYS_AHEAD = 30;
@@ -49,7 +49,7 @@ export async function scheduleNotifications(times: string[]): Promise<void> {
         icon: '/icons/icon-192.png',
         tag: `stretch-${time.replace(':', '')}-d${day}`,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        showTrigger: new (window as any).TimestampTrigger(trigger.getTime()),
+        showTrigger: new (globalThis as any).TimestampTrigger(trigger.getTime()),
       });
     }
   }

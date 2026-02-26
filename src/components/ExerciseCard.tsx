@@ -6,7 +6,7 @@ interface Props {
   exercise: Exercise;
 }
 
-export default function ExerciseCard({ exercise }: Props) {
+export default function ExerciseCard({ exercise }: Readonly<Props>) {
   const [open, setOpen] = useState(false);
   const bodyId = `exercise-body-${exercise.id}`;
 

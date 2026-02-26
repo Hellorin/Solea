@@ -13,7 +13,7 @@ export default function Home() {
 
   useEffect(() => {
     setTimes(loadTimes());
-    if ('Notification' in window) {
+    if ('Notification' in globalThis) {
       setPermission(Notification.permission);
     }
   }, []);

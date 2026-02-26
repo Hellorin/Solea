@@ -155,7 +155,7 @@ export default function Cycle() {
   }
 
   function handleDeleteCustomCycle(id: string) {
-    if (window.confirm('Delete this cycle?')) {
+    if (globalThis.confirm('Delete this cycle?')) {
       deleteCustomCycle(id);
       setCustomCycles(loadCustomCycles());
     }
@@ -410,18 +410,12 @@ export default function Cycle() {
             </div>
           </div>
 
-          {!ready ? (
-            <div className={styles.runActions}>
-              <button className={styles.btnPrimary} onClick={handleReady}>
-                I'm Ready
-              </button>
-            </div>
-          ) : (
+          {ready ? (
             <>
               <div className={styles.runActions}>
                 <button
-                  className={styles.btnPause}
-                  onClick={paused ? handleResume : handlePause}
+                    className={styles.btnPause}
+                    onClick={paused ? handleResume : handlePause}
                 >
                   {paused ? '▶ Resume' : '⏸ Pause'}
                 </button>
@@ -431,11 +425,17 @@ export default function Cycle() {
               </div>
 
               {currentIndex + 1 < list.length && (
-                <button className={styles.skipBtn} onClick={handleNext}>
-                  Skip
-                </button>
+                  <button className={styles.skipBtn} onClick={handleNext}>
+                    Skip
+                  </button>
               )}
             </>
+          ) : (
+            <div className={styles.runActions}>
+              <button className={styles.btnPrimary} onClick={handleReady}>
+                I'm Ready
+              </button>
+            </div>
           )}
         </div>
       </div>

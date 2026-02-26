@@ -43,7 +43,7 @@ export default function Schedule() {
       return;
     }
 
-    const newTimes = [...times, inputValue].sort();
+    const newTimes = [...times, inputValue].sort((a, b) => a.localeCompare(b));
     setTimes(newTimes);
     saveTimes(newTimes);
     scheduleNotifications(newTimes);

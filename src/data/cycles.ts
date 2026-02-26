@@ -27,10 +27,10 @@ export const PRESETS: CyclePreset[] = [
     tagline: 'Before your first steps — reduces that sharp morning pain',
     exerciseIds: [
       'toe-extension',    // plantar fascia stretch before standing
-      'ankle-circles',    // gentle warm-up
       'towel-stretch',    // calf + arch lengthening
       'calf-straight',    // gastrocnemius release
       'calf-bent',        // soleus release
+      'ankle-circles',    // gentle warm-up
       'knee-to-wall',     // dorsiflexion mobility — key for morning stiffness
     ],
   },
@@ -40,12 +40,12 @@ export const PRESETS: CyclePreset[] = [
     emoji: '💪',
     tagline: 'Core strengthening — do this daily to rebuild the foot and hip',
     exerciseIds: [
+      'toe-spread',            // neuromuscular control
+      'ankle-alphabet',        // joint mobility maintenance
       'eccentric-heel-drop',   // Alfredson protocol — gold standard
       'standing-heel-raise',   // progressive load
       'short-foot',            // intrinsic arch activation
-      'toe-spread',            // neuromuscular control
       'clamshell',             // hip abductor — corrects faulty load patterns
-      'ankle-alphabet',        // joint mobility maintenance
     ],
   },
   {
@@ -54,10 +54,10 @@ export const PRESETS: CyclePreset[] = [
     emoji: '🌙',
     tagline: 'Wind down and recover after a day on your feet',
     exerciseIds: [
-      'tennis-ball-roll',  // accessible self-massage
-      'bottle-roll',       // cold + fascial release
       'calf-straight',     // end-of-day calf release
       'calf-bent',         // soleus release
+      'tennis-ball-roll',  // accessible self-massage
+      'bottle-roll',       // cold + fascial release
       'toe-scrunch',       // intrinsic muscle activation
       'marble-pickups',    // coordination + intrinsic strength
       'heel-raise',        // seated — gentle close-out

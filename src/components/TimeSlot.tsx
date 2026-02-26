@@ -5,7 +5,7 @@ interface Props {
   onDelete: (time: string) => void;
 }
 
-export default function TimeSlot({ time, onDelete }: Props) {
+export default function TimeSlot({ time, onDelete }: Readonly<Props>) {
   return (
     <div className={styles.slot}>
       <span className={styles.time}>{time}</span>
