@@ -30,7 +30,7 @@ Instead of spending an afternoon trialling mediocre apps, you can spend the same
 - Runs offline, installs to your home screen, and respects your phone's storage
 - Can be changed or extended any time you want
 
-Solea was built this way. The entire app — exercise library, reminders, guided cycles, streak tracking — was coded with AI assistance in a single session. The result is cleaner, faster, and more useful than anything available on the app stores.
+Solea was built this way. The entire app — exercise library, reminders, guided cycles, streak tracking, pain logging — was coded with AI assistance. The result is cleaner, faster, and more useful than anything available on the app stores.
 
 ---
 
@@ -40,11 +40,11 @@ Solea was built this way. The entire app — exercise library, reminders, guided
 
 **Exercise guide** — 11 evidence-based exercises across three categories: stretching, mobility, and strengthening. Each has step-by-step instructions, timing guidance, and clinical tips. No account required to read them.
 
-**Guided cycles** — step through all exercises in sequence with a built-in timer. Toggle strengthening exercises on/off depending on where you are in your recovery.
+**Guided cycles** — step through all exercises in sequence with a built-in timer. Three presets (morning, anytime, evening) plus a custom cycle builder. Toggle strengthening exercises on/off depending on where you are in your recovery.
 
-**Progress tracking** — streak counter, a 6-month activity heatmap, and a session history log. Motivation without gamification nonsense.
+**Progress tracking** — streak counter, a 30-day activity heatmap, session history log, and a daily pain check-in (1–5 emoji scale) with a trend chart so you can see whether the routine is actually helping. Motivation without gamification nonsense.
 
-**Installable PWA** — add it to your phone's home screen. Works offline. No app store, no install size, no permissions you didn't ask for.
+**Installable PWA** — add it to your phone's home screen. Works offline. Screen stays awake during active sessions. No app store, no install size, no permissions you didn't ask for.
 
 ---
 
