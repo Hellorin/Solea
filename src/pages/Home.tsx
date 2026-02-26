@@ -2,27 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadTimes } from '../utils/storage';
 import { requestPermission } from '../utils/notifications';
+import { getGreeting, getNextReminder } from '../utils/reminderUtils';
 import styles from './Home.module.css';
-
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
-}
-
-function getNextReminder(times: string[]): string | null {
-  if (times.length === 0) return null;
-  const now = new Date();
-  const currentMins = now.getHours() * 60 + now.getMinutes();
-  const sorted = [...times].sort();
-  for (const t of sorted) {
-    const [h, m] = t.split(':').map(Number);
-    const mins = h * 60 + m;
-    if (mins > currentMins) return t;
-  }
-  return sorted[0]; // wrap to first of next day
-}
 
 export default function Home() {
   const [times, setTimes] = useState<string[]>([]);
@@ -36,7 +17,7 @@ export default function Home() {
     }
   }, []);
 
-  const nextReminder = getNextReminder(times);
+  const nextReminder = getNextReminder(times, new Date());
 
   async function handlePermissionBanner() {
     const granted = await requestPermission();
@@ -64,7 +45,7 @@ export default function Home() {
           />
         </svg>
         <div className={styles.heroContent}>
-          <p className={styles.greeting}>{getGreeting()} 👋</p>
+          <p className={styles.greeting}>{getGreeting(new Date().getHours())} 👋</p>
           <h1 className={styles.title}>Solea</h1>
         </div>
       </div>

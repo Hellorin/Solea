@@ -199,9 +199,6 @@ export default function Cycle() {
 
           {!ready ? (
             <div className={styles.runActions}>
-              <button className={styles.btnPause} onClick={paused ? handleResume : handlePause}>
-                {paused ? '▶ Resume' : '⏸ Pause'}
-              </button>
               <button className={styles.btnPrimary} onClick={handleReady}>
                 I'm Ready
               </button>

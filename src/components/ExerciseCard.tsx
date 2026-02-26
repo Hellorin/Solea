@@ -8,6 +8,7 @@ interface Props {
 
 export default function ExerciseCard({ exercise }: Props) {
   const [open, setOpen] = useState(false);
+  const bodyId = `exercise-body-${exercise.id}`;
 
   return (
     <div className={`${styles.card} ${open ? styles.expanded : ''}`}>
@@ -15,12 +16,13 @@ export default function ExerciseCard({ exercise }: Props) {
         className={styles.header}
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
+        aria-controls={bodyId}
       >
         <span className={styles.name}>{exercise.name}</span>
         <span className={`${styles.chevron} ${open ? styles.chevronOpen : ''}`}>›</span>
       </button>
 
-      <div className={styles.body} style={{ maxHeight: open ? '1000px' : '0' }}>
+      <div id={bodyId} className={styles.body} style={{ maxHeight: open ? '1000px' : '0' }}>
         <div className={styles.bodyInner}>
           <img
             src={exercise.image}

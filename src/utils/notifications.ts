@@ -32,7 +32,9 @@ export async function scheduleNotifications(times: string[]): Promise<void> {
   const now = Date.now();
 
   for (const time of times) {
+    if (!/^\d{1,2}:\d{2}$/.test(time)) continue;
     const [hours, minutes] = time.split(':').map(Number);
+    if (hours > 23 || minutes > 59) continue;
 
     for (let day = 0; day < DAYS_AHEAD; day++) {
       const trigger = new Date();

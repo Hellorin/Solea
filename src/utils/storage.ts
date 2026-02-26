@@ -9,5 +9,9 @@ export function loadTimes(): string[] {
 }
 
 export function saveTimes(times: string[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(times));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(times));
+  } catch {
+    // localStorage unavailable or quota exceeded — silently no-op
+  }
 }

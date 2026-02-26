@@ -14,8 +14,12 @@ export function loadHistory(): Session[] {
 export function saveSession(secs: number, exerciseCount: number): void {
   const now = new Date();
   const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const time = now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
   const history = loadHistory();
   history.push({ date, secs, exerciseCount, time });
-  localStorage.setItem(KEY, JSON.stringify(history));
+  try {
+    localStorage.setItem(KEY, JSON.stringify(history));
+  } catch {
+    // localStorage unavailable or quota exceeded — silently no-op
+  }
 }
