@@ -485,6 +485,41 @@
   margin: 0;
 }
 
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.renameBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 0;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.renameBtn:hover {
+  opacity: 1;
+}
+
+.renameInput {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--sage);
+  outline: none;
+  padding: 0 0 1px;
+  width: 100%;
+  font-family: inherit;
+}
+
 .deleteBtn {
   background: none;
   border: none;

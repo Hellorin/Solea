@@ -41,10 +41,12 @@ A mobile-first PWA for plantar fasciitis recovery. Helps users stick to their st
 ## Development
 
 ```bash
-npm run dev      # dev server at localhost:5173
-npm test         # launch vite tests
-npm run build    # TypeScript check + Vite build → dist/
-npm run preview  # serve the built dist/
+npm run dev       # dev server at localhost:5173
+npm test          # launch vite tests
+npm run build     # TypeScript check + Vite build → dist/
+npm run preview   # serve the built dist/
+npx vercel        # deploy to preview environment on vercel
+npx vercel --prod # deploy to prod environment on vercel
 ```
 
 ## Verification after code generation

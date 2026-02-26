@@ -29,6 +29,15 @@ export function saveCustomCycle(cycle: CustomCycle): void {
   }
 }
 
+export function renameCustomCycle(id: string, newLabel: string): void {
+  const existing = loadCustomCycles();
+  const idx = existing.findIndex(c => c.id === id);
+  if (idx >= 0) {
+    existing[idx] = { ...existing[idx], label: newLabel };
+    localStorage.setItem(KEY, JSON.stringify(existing));
+  }
+}
+
 export function deleteCustomCycle(id: string): void {
   const existing = loadCustomCycles();
   const filtered = existing.filter(c => c.id !== id);

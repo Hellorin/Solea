@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PRESETS, getPresetExercises, getCustomCycleExercises } from '../data/cycles';
 import type { CyclePreset, CustomCycle } from '../data/cycles';
 import type { Exercise } from '../data/exercises';
 import { saveSession } from '../utils/history';
-import { loadCustomCycles, deleteCustomCycle } from '../utils/customCycles';
+import { loadCustomCycles, deleteCustomCycle, renameCustomCycle } from '../utils/customCycles';
 import styles from './Cycle.module.css';
 
 type View = 'pick' | 'running' | 'done';
@@ -39,6 +39,8 @@ export default function Cycle() {
   const [paused, setPaused] = useState(false);
   const [ready, setReady] = useState(false);
   const [expandedPreset, setExpandedPreset] = useState<string | null>(null);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState('');
   const readyRef = useRef(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -124,6 +126,25 @@ export default function Cycle() {
     }
   }
 
+  function handleRenameStart(cycle: CustomCycle) {
+    setRenamingId(cycle.id);
+    setRenameValue(cycle.label);
+  }
+
+  function handleRenameCommit(id: string) {
+    const trimmed = renameValue.trim();
+    if (trimmed && trimmed !== customCycles.find(c => c.id === id)?.label) {
+      renameCustomCycle(id, trimmed);
+      setCustomCycles(loadCustomCycles());
+    }
+    setRenamingId(null);
+  }
+
+  function handleRenameKeyDown(e: KeyboardEvent<HTMLInputElement>, id: string) {
+    if (e.key === 'Enter') handleRenameCommit(id);
+    if (e.key === 'Escape') setRenamingId(null);
+  }
+
   // PICK VIEW
   if (view === 'pick') {
     return (
@@ -191,7 +212,25 @@ export default function Cycle() {
                 <div className={styles.presetTop}>
                   <span className={styles.presetEmoji}>{cycle.emoji}</span>
                   <div className={styles.presetInfo}>
-                    <span className={styles.presetLabel}>{cycle.label}</span>
+                    {renamingId === cycle.id ? (
+                      <input
+                        className={styles.renameInput}
+                        value={renameValue}
+                        autoFocus
+                        onChange={e => setRenameValue(e.target.value)}
+                        onBlur={() => handleRenameCommit(cycle.id)}
+                        onKeyDown={e => handleRenameKeyDown(e, cycle.id)}
+                      />
+                    ) : (
+                      <div className={styles.labelRow}>
+                        <span className={styles.presetLabel}>{cycle.label}</span>
+                        <button
+                          className={styles.renameBtn}
+                          onClick={() => handleRenameStart(cycle)}
+                          aria-label="Rename cycle"
+                        >✏</button>
+                      </div>
+                    )}
                     <span className={styles.presetTagline}>{exList.length} exercises · ~{estMins} min</span>
                   </div>
                   <button
