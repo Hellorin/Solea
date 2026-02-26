@@ -17,14 +17,17 @@ A mobile-first PWA for plantar fasciitis recovery. Helps users stick to their st
 | `/` | Home | Greeting, next reminder, quick nav |
 | `/schedule` | Schedule | Add/remove daily reminder times |
 | `/guide` | Guide | Browse exercises by category |
-| `/cycle` | Cycle | Step-through guided exercise session with timer |
+| `/cycle` | Cycle | Pick preset or custom cycle, step-through guided session with timer |
+| `/cycle/new` | CycleBuilder | 3-step wizard to create and save a custom cycle |
 | `/stats` | Stats | Streak tracking, heatmap calendar, session history |
 
 ## Key files
 
 - `src/data/exercises.ts` — exercise definitions (stretching / mobility / strengthening)
+- `src/data/cycles.ts` — preset cycle definitions + `CyclePreset` / `CustomCycle` types
 - `src/utils/storage.ts` — reminder times in localStorage (`reminder_times`)
 - `src/utils/history.ts` — session history in localStorage (`plantar_history`)
+- `src/utils/customCycles.ts` — custom cycle CRUD in localStorage (`custom_cycles`) + `sortByPTProtocol`
 - `src/utils/notifications.ts` — Web Notifications API, reminder scheduling
 - `src/components/BottomNav.tsx` — persistent tab bar
 - `vite.config.ts` — PWA manifest config
@@ -39,10 +42,11 @@ A mobile-first PWA for plantar fasciitis recovery. Helps users stick to their st
 
 ```bash
 npm run dev      # dev server at localhost:5173
+npm test         # launch vite tests
 npm run build    # TypeScript check + Vite build → dist/
 npm run preview  # serve the built dist/
 ```
 
 ## Verification after code generation
-
-Verify by opening a browser that all features are actually well implemented and as expected.
+1. Write unit tests to validate the code generated
+2. Verify by opening a browser that all features are actually well implemented and as expected.

@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PRESETS, getPresetExercises } from '../data/cycles';
-import type { CyclePreset } from '../data/cycles';
+import { PRESETS, getPresetExercises, getCustomCycleExercises } from '../data/cycles';
+import type { CyclePreset, CustomCycle } from '../data/cycles';
+import type { Exercise } from '../data/exercises';
 import { saveSession } from '../utils/history';
+import { loadCustomCycles, deleteCustomCycle } from '../utils/customCycles';
 import styles from './Cycle.module.css';
 
 type View = 'pick' | 'running' | 'done';
@@ -19,10 +21,18 @@ function fmt(secs: number): string {
   return `${m}:${s}`;
 }
 
+function resolveList(cycle: CyclePreset | CustomCycle): Exercise[] {
+  if ('tagline' in cycle) {
+    return getPresetExercises(cycle);
+  }
+  return getCustomCycleExercises(cycle);
+}
+
 export default function Cycle() {
   const navigate = useNavigate();
   const [view, setView] = useState<View>('pick');
-  const [selectedPreset, setSelectedPreset] = useState<CyclePreset | null>(null);
+  const [activeCycle, setActiveCycle] = useState<CyclePreset | CustomCycle | null>(null);
+  const [customCycles, setCustomCycles] = useState<CustomCycle[]>(() => loadCustomCycles());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [totalSecs, setTotalSecs] = useState(0);
   const [exSecs, setExSecs] = useState(0);
@@ -32,7 +42,7 @@ export default function Cycle() {
   const readyRef = useRef(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const list = selectedPreset ? getPresetExercises(selectedPreset) : [];
+  const list = activeCycle ? resolveList(activeCycle) : [];
 
   function startTick() {
     intervalRef.current = setInterval(() => {
@@ -52,8 +62,8 @@ export default function Cycle() {
     return () => pauseTick();
   }, []);
 
-  function handleStart(preset: CyclePreset) {
-    setSelectedPreset(preset);
+  function handleStart(cycle: CyclePreset | CustomCycle) {
+    setActiveCycle(cycle);
     setCurrentIndex(0);
     setTotalSecs(0);
     setExSecs(0);
@@ -93,7 +103,7 @@ export default function Cycle() {
   }
 
   function handleRestart() {
-    if (selectedPreset) handleStart(selectedPreset);
+    if (activeCycle) handleStart(activeCycle);
   }
 
   function handlePickCycle() {
@@ -105,6 +115,13 @@ export default function Cycle() {
     setReady(false);
     readyRef.current = false;
     setPaused(false);
+  }
+
+  function handleDeleteCustomCycle(id: string) {
+    if (window.confirm('Delete this cycle?')) {
+      deleteCustomCycle(id);
+      setCustomCycles(loadCustomCycles());
+    }
   }
 
   // PICK VIEW
@@ -159,6 +176,61 @@ export default function Cycle() {
               </div>
             );
           })}
+
+          {customCycles.length > 0 && (
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>My Cycles</h2>
+            </div>
+          )}
+
+          {customCycles.map(cycle => {
+            const exList = getCustomCycleExercises(cycle);
+            const estMins = Math.round(exList.length * 1.5);
+            return (
+              <div key={cycle.id} className={styles.presetCard}>
+                <div className={styles.presetTop}>
+                  <span className={styles.presetEmoji}>{cycle.emoji}</span>
+                  <div className={styles.presetInfo}>
+                    <span className={styles.presetLabel}>{cycle.label}</span>
+                    <span className={styles.presetTagline}>{exList.length} exercises · ~{estMins} min</span>
+                  </div>
+                  <button
+                    className={styles.deleteBtn}
+                    onClick={() => handleDeleteCustomCycle(cycle.id)}
+                    aria-label="Delete cycle"
+                  >×</button>
+                </div>
+                <button
+                  className={styles.presetMetaToggle}
+                  onClick={() => setExpandedPreset(expandedPreset === cycle.id ? null : cycle.id)}
+                >
+                  <span>{exList.length} exercises</span>
+                  <span className={styles.presetMetaDot}>·</span>
+                  <span>~{estMins} min</span>
+                  <span className={`${styles.chevron} ${expandedPreset === cycle.id ? styles.chevronOpen : ''}`}>›</span>
+                </button>
+                {expandedPreset === cycle.id && (
+                  <div className={styles.exerciseList}>
+                    {exList.map(ex => (
+                      <div key={ex.id} className={styles.exerciseListItem}>
+                        <span className={styles.exerciseListName}>{ex.name}</span>
+                        <span className={`${styles.categoryTag} ${styles[categoryClass[ex.category]]}`}>
+                          {ex.category}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <button className={styles.btnPrimary} onClick={() => handleStart(cycle)}>
+                  Start
+                </button>
+              </div>
+            );
+          })}
+
+          <button className={styles.createBtn} onClick={() => navigate('/cycle/new')}>
+            + Create your own cycle
+          </button>
         </div>
       </div>
     );

@@ -11,6 +11,14 @@ export interface CyclePreset {
   exerciseIds: string[];
 }
 
+export interface CustomCycle {
+  id: string;
+  label: string;
+  emoji: string;
+  exerciseIds: string[];
+  createdAt: string;
+}
+
 export const PRESETS: CyclePreset[] = [
   {
     id: 'morning',
@@ -37,6 +45,12 @@ export const PRESETS: CyclePreset[] = [
 
 export function getPresetExercises(preset: CyclePreset): Exercise[] {
   return preset.exerciseIds
+    .map(id => exercises.find(e => e.id === id))
+    .filter((e): e is Exercise => e !== undefined);
+}
+
+export function getCustomCycleExercises(cycle: CustomCycle): Exercise[] {
+  return cycle.exerciseIds
     .map(id => exercises.find(e => e.id === id))
     .filter((e): e is Exercise => e !== undefined);
 }

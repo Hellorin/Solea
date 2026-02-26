@@ -472,6 +472,56 @@
   color: var(--text);
 }
 
+/* My Cycles section */
+
+.sectionHeader {
+  padding: 8px 4px 0;
+}
+
+.sectionTitle {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: var(--text-muted);
+  line-height: 1;
+  padding: 0 0 0 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.deleteBtn:hover {
+  color: #C0403A;
+}
+
+.createBtn {
+  background: transparent;
+  color: var(--sage);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 15px 24px;
+  border-radius: 50px;
+  border: 2px solid var(--sage);
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s ease, transform 0.15s ease;
+  width: 100%;
+  font-family: inherit;
+}
+
+.createBtn:active {
+  transform: scale(0.97);
+  background: rgba(123, 175, 142, 0.08);
+}
+
 /* Done */
 
 .doneHero {
