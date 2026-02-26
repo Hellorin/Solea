@@ -25,7 +25,7 @@
 }
 
 .tab.active {
-  color: #7BAF8E;
+  color: var(--sage-text);
 }
 
 .icon {

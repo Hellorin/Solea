@@ -1,4 +1,4 @@
-import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useWakeLock } from '../hooks/useWakeLock';
 import { PRESETS, getPresetExercises, getCustomCycleExercises } from '../data/cycles';
@@ -9,6 +9,7 @@ import { loadCustomCycles, deleteCustomCycle, renameCustomCycle } from '../utils
 import styles from './Cycle.module.css';
 
 type View = 'pick' | 'equipment' | 'running' | 'done';
+type RenameState = { id: string; value: string } | null;
 
 const categoryClass: Record<string, string> = {
   stretching: 'catStretching',
@@ -40,6 +41,66 @@ function getUniqueEquipment(exercises: Exercise[]): string[] {
   return result;
 }
 
+// Step 1: useReadySync — keeps ready state and ref in sync automatically
+function useReadySync(initial = false) {
+  const [ready, setReady] = useState(initial);
+  const readyRef = useRef(initial);
+  function syncReady(value: boolean) {
+    readyRef.current = value;
+    setReady(value);
+  }
+  return { ready, readyRef, setReady: syncReady };
+}
+
+// Step 3: CycleCard — shared card for presets and custom cycles
+interface CycleCardProps {
+  emoji: string;
+  label: string;
+  subtitle: string;
+  exList: Exercise[];
+  expanded: boolean;
+  onToggleExpand: () => void;
+  onStart: () => void;
+  renameControl?: ReactNode;
+  onDelete?: () => void;
+}
+
+function CycleCard({ emoji, label, subtitle, exList, expanded, onToggleExpand, onStart, renameControl, onDelete }: Readonly<CycleCardProps>) {
+  return (
+    <div className={styles.presetCard}>
+      <div className={styles.presetTop}>
+        <span className={styles.presetEmoji}>{emoji}</span>
+        <div className={styles.presetInfo}>
+          {renameControl ?? <span className={styles.presetLabel}>{label}</span>}
+          <span className={styles.presetTagline}>{subtitle}</span>
+        </div>
+        {onDelete && (
+          <button className={styles.deleteBtn} onClick={onDelete} aria-label="Delete cycle">×</button>
+        )}
+      </div>
+      <button className={styles.presetMetaToggle} onClick={onToggleExpand}>
+        <span>{exList.length} exercises</span>
+        <span className={styles.presetMetaDot}>·</span>
+        <span>~{Math.round(exList.length * 1.5)} min</span>
+        <span className={`${styles.chevron} ${expanded ? styles.chevronOpen : ''}`}>›</span>
+      </button>
+      {expanded && (
+        <div className={styles.exerciseList}>
+          {exList.map(ex => (
+            <div key={ex.id} className={styles.exerciseListItem}>
+              <span className={styles.exerciseListName}>{ex.name}</span>
+              <span className={`${styles.categoryTag} ${styles[categoryClass[ex.category]]}`}>
+                {ex.category}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+      <button className={styles.btnPrimary} onClick={onStart}>Start</button>
+    </div>
+  );
+}
+
 export default function Cycle() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -50,11 +111,9 @@ export default function Cycle() {
   const [totalSecs, setTotalSecs] = useState(0);
   const [exSecs, setExSecs] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [ready, setReady] = useState(false);
+  const { ready, readyRef, setReady } = useReadySync();   // Step 1
   const [expandedPreset, setExpandedPreset] = useState<string | null>(null);
-  const [renamingId, setRenamingId] = useState<string | null>(null);
-  const [renameValue, setRenameValue] = useState('');
-  const readyRef = useRef(false);
+  const [renaming, setRenaming] = useState<RenameState>(null); // Step 2
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const wakeLockActive = view === 'running' && !paused;
@@ -95,7 +154,6 @@ export default function Cycle() {
     setTotalSecs(0);
     setExSecs(0);
     setReady(false);
-    readyRef.current = false;
     setPaused(false);
     const equipment = getUniqueEquipment(resolveList(cycle));
     if (equipment.length > 0) {
@@ -113,7 +171,6 @@ export default function Cycle() {
 
   function handleReady() {
     setReady(true);
-    readyRef.current = true;
   }
 
   function handlePause() {
@@ -126,17 +183,22 @@ export default function Cycle() {
     setPaused(false);
   }
 
+  // Step 4: Two focused functions instead of one mixed handleNext
+  function finishCycle() {
+    pauseTick();
+    saveSession(totalSecs, list.length);
+    setView('done');
+  }
+
+  function advanceExercise() {
+    setCurrentIndex(i => i + 1);
+    setExSecs(0);
+    setReady(false);
+  }
+
   function handleNext() {
-    if (currentIndex + 1 >= list.length) {
-      pauseTick();
-      saveSession(totalSecs, list.length);
-      setView('done');
-    } else {
-      setCurrentIndex(i => i + 1);
-      setExSecs(0);
-      setReady(false);
-      readyRef.current = false;
-    }
+    if (currentIndex + 1 >= list.length) finishCycle();
+    else advanceExercise();
   }
 
   function handleRestart() {
@@ -150,7 +212,6 @@ export default function Cycle() {
     setTotalSecs(0);
     setExSecs(0);
     setReady(false);
-    readyRef.current = false;
     setPaused(false);
   }
 
@@ -161,27 +222,24 @@ export default function Cycle() {
     }
   }
 
+  // Step 2: Consolidated rename handlers
   function handleRenameStart(cycle: CustomCycle) {
-    setRenamingId(cycle.id);
-    setRenameValue(cycle.label);
+    setRenaming({ id: cycle.id, value: cycle.label });
   }
 
-  function handleRenameCommit(id: string) {
-    const trimmed = renameValue.trim();
-    if (trimmed && trimmed !== customCycles.find(c => c.id === id)?.label) {
-      renameCustomCycle(id, trimmed);
+  function handleRenameCommit() {
+    if (!renaming) return;
+    const trimmed = renaming.value.trim();
+    if (trimmed && trimmed !== customCycles.find(c => c.id === renaming.id)?.label) {
+      renameCustomCycle(renaming.id, trimmed);
       setCustomCycles(loadCustomCycles());
     }
-    setRenamingId(null);
+    setRenaming(null);
   }
 
-  function handleRenameKeyDown(e: KeyboardEvent<HTMLInputElement>, id: string) {
-    if (e.key === 'Enter') handleRenameCommit(id);
-    if (e.key === 'Escape') setRenamingId(null);
-  }
+  // Step 6: Named render sub-functions — each view is independently readable
 
-  // PICK VIEW
-  if (view === 'pick') {
+  function renderPickView() {
     return (
       <div className={styles.page}>
         <div className={styles.header}>
@@ -195,41 +253,17 @@ export default function Cycle() {
         <div className={styles.content}>
           {PRESETS.map(preset => {
             const exList = getPresetExercises(preset);
-            const estMins = Math.round(exList.length * 1.5);
             return (
-              <div key={preset.id} className={styles.presetCard}>
-                <div className={styles.presetTop}>
-                  <span className={styles.presetEmoji}>{preset.emoji}</span>
-                  <div className={styles.presetInfo}>
-                    <span className={styles.presetLabel}>{preset.label}</span>
-                    <span className={styles.presetTagline}>{preset.tagline}</span>
-                  </div>
-                </div>
-                <button
-                  className={styles.presetMetaToggle}
-                  onClick={() => setExpandedPreset(expandedPreset === preset.id ? null : preset.id)}
-                >
-                  <span>{exList.length} exercises</span>
-                  <span className={styles.presetMetaDot}>·</span>
-                  <span>~{estMins} min</span>
-                  <span className={`${styles.chevron} ${expandedPreset === preset.id ? styles.chevronOpen : ''}`}>›</span>
-                </button>
-                {expandedPreset === preset.id && (
-                  <div className={styles.exerciseList}>
-                    {exList.map(ex => (
-                      <div key={ex.id} className={styles.exerciseListItem}>
-                        <span className={styles.exerciseListName}>{ex.name}</span>
-                        <span className={`${styles.categoryTag} ${styles[categoryClass[ex.category]]}`}>
-                          {ex.category}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <button className={styles.btnPrimary} onClick={() => handleStart(preset)}>
-                  Start
-                </button>
-              </div>
+              <CycleCard
+                key={preset.id}
+                emoji={preset.emoji}
+                label={preset.label}
+                subtitle={preset.tagline}
+                exList={exList}
+                expanded={expandedPreset === preset.id}
+                onToggleExpand={() => setExpandedPreset(expandedPreset === preset.id ? null : preset.id)}
+                onStart={() => handleStart(preset)}
+              />
             );
           })}
 
@@ -242,63 +276,41 @@ export default function Cycle() {
           {customCycles.map(cycle => {
             const exList = getCustomCycleExercises(cycle);
             const estMins = Math.round(exList.length * 1.5);
-            return (
-              <div key={cycle.id} className={styles.presetCard}>
-                <div className={styles.presetTop}>
-                  <span className={styles.presetEmoji}>{cycle.emoji}</span>
-                  <div className={styles.presetInfo}>
-                    {renamingId === cycle.id ? (
-                      <input
-                        className={styles.renameInput}
-                        value={renameValue}
-                        autoFocus
-                        onChange={e => setRenameValue(e.target.value)}
-                        onBlur={() => handleRenameCommit(cycle.id)}
-                        onKeyDown={e => handleRenameKeyDown(e, cycle.id)}
-                      />
-                    ) : (
-                      <div className={styles.labelRow}>
-                        <span className={styles.presetLabel}>{cycle.label}</span>
-                        <button
-                          className={styles.renameBtn}
-                          onClick={() => handleRenameStart(cycle)}
-                          aria-label="Rename cycle"
-                        >✏</button>
-                      </div>
-                    )}
-                    <span className={styles.presetTagline}>{exList.length} exercises · ~{estMins} min</span>
-                  </div>
-                  <button
-                    className={styles.deleteBtn}
-                    onClick={() => handleDeleteCustomCycle(cycle.id)}
-                    aria-label="Delete cycle"
-                  >×</button>
-                </div>
+            const renameControl = renaming?.id === cycle.id ? (
+              <input
+                className={styles.renameInput}
+                value={renaming.value}
+                autoFocus
+                onChange={e => setRenaming({ ...renaming, value: e.target.value })}
+                onBlur={handleRenameCommit}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') handleRenameCommit();
+                  if (e.key === 'Escape') setRenaming(null);
+                }}
+              />
+            ) : (
+              <div className={styles.labelRow}>
+                <span className={styles.presetLabel}>{cycle.label}</span>
                 <button
-                  className={styles.presetMetaToggle}
-                  onClick={() => setExpandedPreset(expandedPreset === cycle.id ? null : cycle.id)}
-                >
-                  <span>{exList.length} exercises</span>
-                  <span className={styles.presetMetaDot}>·</span>
-                  <span>~{estMins} min</span>
-                  <span className={`${styles.chevron} ${expandedPreset === cycle.id ? styles.chevronOpen : ''}`}>›</span>
-                </button>
-                {expandedPreset === cycle.id && (
-                  <div className={styles.exerciseList}>
-                    {exList.map(ex => (
-                      <div key={ex.id} className={styles.exerciseListItem}>
-                        <span className={styles.exerciseListName}>{ex.name}</span>
-                        <span className={`${styles.categoryTag} ${styles[categoryClass[ex.category]]}`}>
-                          {ex.category}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <button className={styles.btnPrimary} onClick={() => handleStart(cycle)}>
-                  Start
-                </button>
+                  className={styles.renameBtn}
+                  onClick={() => handleRenameStart(cycle)}
+                  aria-label="Rename cycle"
+                >✏</button>
               </div>
+            );
+            return (
+              <CycleCard
+                key={cycle.id}
+                emoji={cycle.emoji}
+                label={cycle.label}
+                subtitle={`${exList.length} exercises · ~${estMins} min`}
+                exList={exList}
+                expanded={expandedPreset === cycle.id}
+                onToggleExpand={() => setExpandedPreset(expandedPreset === cycle.id ? null : cycle.id)}
+                onStart={() => handleStart(cycle)}
+                renameControl={renameControl}
+                onDelete={() => handleDeleteCustomCycle(cycle.id)}
+              />
             );
           })}
 
@@ -310,8 +322,7 @@ export default function Cycle() {
     );
   }
 
-  // EQUIPMENT VIEW
-  if (view === 'equipment') {
+  function renderEquipmentView() {
     const equipment = getUniqueEquipment(list);
     return (
       <div className={styles.page}>
@@ -346,9 +357,12 @@ export default function Cycle() {
     );
   }
 
-  // RUNNING VIEW
-  if (view === 'running') {
+  function renderRunningView() {
     const ex = list[currentIndex];
+    // Step 5: Derive labels before JSX — no nested ternaries
+    const isLastExercise = currentIndex + 1 >= list.length;
+    const pauseLabel = paused ? '▶ Resume' : '⏸ Pause';
+    const nextLabel = isLastExercise ? 'Finish' : 'Next Exercise';
 
     return (
       <div className={styles.page}>
@@ -365,11 +379,7 @@ export default function Cycle() {
         </div>
 
         <div className={styles.content}>
-          <img
-            src={ex.image}
-            alt={ex.name}
-            className={styles.exerciseImage}
-          />
+          <img src={ex.image} alt={ex.name} className={styles.exerciseImage} />
 
           <h2 className={styles.exerciseName}>{ex.name}</h2>
 
@@ -410,67 +420,58 @@ export default function Cycle() {
             </div>
           </div>
 
-          {ready ? (
-            <>
-              <div className={styles.runActions}>
-                <button
-                    className={styles.btnPause}
-                    onClick={paused ? handleResume : handlePause}
-                >
-                  {paused ? '▶ Resume' : '⏸ Pause'}
-                </button>
-                <button className={styles.btnPrimary} onClick={handleNext}>
-                  {currentIndex + 1 >= list.length ? 'Finish' : 'Next Exercise'}
-                </button>
-              </div>
-
-              {currentIndex + 1 < list.length && (
-                  <button className={styles.skipBtn} onClick={handleNext}>
-                    Skip
-                  </button>
-              )}
-            </>
-          ) : (
+          {/* Step 5: Flat conditionals replace nested ternaries */}
+          {!ready && (
             <div className={styles.runActions}>
-              <button className={styles.btnPrimary} onClick={handleReady}>
-                I'm Ready
-              </button>
+              <button className={styles.btnPrimary} onClick={handleReady}>I'm Ready</button>
             </div>
+          )}
+          {ready && (
+            <div className={styles.runActions}>
+              <button className={styles.btnPause} onClick={paused ? handleResume : handlePause}>{pauseLabel}</button>
+              <button className={styles.btnPrimary} onClick={handleNext}>{nextLabel}</button>
+            </div>
+          )}
+          {ready && !isLastExercise && (
+            <button className={styles.skipBtn} onClick={handleNext}>Skip</button>
           )}
         </div>
       </div>
     );
   }
 
-  // DONE VIEW
-  return (
-    <div className={styles.page}>
-      <div className={styles.content}>
-        <div className={styles.doneHero}>
-          <span className={styles.doneEmoji}>🎉</span>
-          <h1 className={styles.doneTitle}>Cycle complete!</h1>
-          <p className={styles.doneSub}>Great work — you finished all {list.length} exercises.</p>
-        </div>
-
-        <div className={styles.statsCard}>
-          <div className={styles.stat}>
-            <span className={styles.statValue}>{fmt(totalSecs)}</span>
-            <span className={styles.statLabel}>total time</span>
+  function renderDoneView() {
+    return (
+      <div className={styles.page}>
+        <div className={styles.content}>
+          <div className={styles.doneHero}>
+            <span className={styles.doneEmoji}>🎉</span>
+            <h1 className={styles.doneTitle}>Cycle complete!</h1>
+            <p className={styles.doneSub}>Great work — you finished all {list.length} exercises.</p>
           </div>
-          <div className={styles.statDivider} />
-          <div className={styles.stat}>
-            <span className={styles.statValue}>{list.length}</span>
-            <span className={styles.statLabel}>exercises done</span>
-          </div>
-        </div>
 
-        <button className={styles.btnPrimary} onClick={handleRestart}>
-          Start Again
-        </button>
-        <button className={styles.btnSecondary} onClick={handlePickCycle}>
-          Choose Cycle
-        </button>
+          <div className={styles.statsCard}>
+            <div className={styles.stat}>
+              <span className={styles.statValue}>{fmt(totalSecs)}</span>
+              <span className={styles.statLabel}>total time</span>
+            </div>
+            <div className={styles.statDivider} />
+            <div className={styles.stat}>
+              <span className={styles.statValue}>{list.length}</span>
+              <span className={styles.statLabel}>exercises done</span>
+            </div>
+          </div>
+
+          <button className={styles.btnPrimary} onClick={handleRestart}>Start Again</button>
+          <button className={styles.btnSecondary} onClick={handlePickCycle}>Choose Cycle</button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  // Step 6: Dispatch
+  if (view === 'pick')      return renderPickView();
+  if (view === 'equipment') return renderEquipmentView();
+  if (view === 'running')   return renderRunningView();
+  return renderDoneView();
 }

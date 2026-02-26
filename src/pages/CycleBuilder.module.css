@@ -10,7 +10,7 @@
 }
 
 .backBtn {
-  color: var(--sage);
+  color: var(--sage-text);
   font-size: 15px;
   font-weight: 500;
   background: none;
@@ -56,7 +56,7 @@
   margin-left: auto;
   background: none;
   border: none;
-  color: var(--sage);
+  color: var(--sage-text);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -163,18 +163,18 @@
 }
 
 .catStretching {
-  color: #7BAF8E;
-  background: rgba(123, 175, 142, 0.12);
+  color: #2B6A49;
+  background: #EFF5F1;
 }
 
 .catMobility {
-  color: #6A8FBF;
-  background: rgba(106, 143, 191, 0.12);
+  color: #2E5F96;
+  background: #EDF2F7;
 }
 
 .catStrengthening {
-  color: #C0895A;
-  background: rgba(192, 137, 90, 0.12);
+  color: #8B5E33;
+  background: #F7F1EB;
 }
 
 .exerciseRow {
@@ -323,7 +323,7 @@
 
 .btnOutline {
   background: transparent;
-  color: var(--sage);
+  color: var(--sage-text);
   font-size: 15px;
   font-weight: 600;
   padding: 13px 24px;

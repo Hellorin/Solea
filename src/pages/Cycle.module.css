@@ -10,7 +10,7 @@
 }
 
 .backBtn {
-  color: var(--sage);
+  color: var(--sage-text);
   font-size: 15px;
   font-weight: 500;
   background: none;
@@ -172,18 +172,18 @@
 }
 
 .catStretching {
-  color: #7BAF8E;
-  background: rgba(123, 175, 142, 0.12);
+  color: #2B6A49;
+  background: #EFF5F1;
 }
 
 .catMobility {
-  color: #6A8FBF;
-  background: rgba(106, 143, 191, 0.12);
+  color: #2E5F96;
+  background: #EDF2F7;
 }
 
 .catStrengthening {
-  color: #C0895A;
-  background: rgba(192, 137, 90, 0.12);
+  color: #8B5E33;
+  background: #F7F1EB;
 }
 
 /* Pre-cycle */
@@ -319,8 +319,8 @@
 .badge {
   font-size: 12px;
   font-weight: 500;
-  color: var(--sage);
-  background: rgba(123, 175, 142, 0.1);
+  color: var(--sage-text);
+  background: #EFF5F1;
   padding: 4px 12px;
   border-radius: 50px;
   white-space: nowrap;
@@ -347,7 +347,7 @@
 }
 
 .tip strong {
-  color: var(--sage);
+  color: var(--sage-text);
 }
 
 .timers {
@@ -422,7 +422,7 @@
 
 .btnSecondary {
   background: var(--surface);
-  color: var(--sage);
+  color: var(--sage-text);
   font-size: 16px;
   font-weight: 600;
   padding: 16px 32px;
@@ -539,7 +539,7 @@
 
 .createBtn {
   background: transparent;
-  color: var(--sage);
+  color: var(--sage-text);
   font-size: 15px;
   font-weight: 600;
   padding: 15px 24px;
@@ -581,7 +581,7 @@
 .equipmentCycleName {
   font-size: 14px;
   font-weight: 500;
-  color: var(--sage);
+  color: var(--sage-text);
   margin: 4px 0 0;
 }
 
@@ -633,8 +633,8 @@
 .equipmentBadge {
   font-size: 12px;
   font-weight: 500;
-  color: #8A6A3A;
-  background: rgba(192, 137, 90, 0.12);
+  color: #7A5C2E;
+  background: #F7F1EB;
   padding: 4px 12px;
   border-radius: 50px;
   white-space: nowrap;

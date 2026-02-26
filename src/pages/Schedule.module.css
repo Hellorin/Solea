@@ -148,8 +148,8 @@
 }
 
 .msgInfo {
-  background: rgba(123, 175, 142, 0.1);
-  color: var(--sage);
+  background: #EFF5F1;
+  color: var(--sage-text);
   font-size: 14px;
   font-weight: 500;
   padding: 12px 16px;

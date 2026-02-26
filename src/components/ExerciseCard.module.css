@@ -78,8 +78,8 @@
 .badge {
   font-size: 12px;
   font-weight: 500;
-  color: var(--sage);
-  background: rgba(123, 175, 142, 0.1);
+  color: var(--sage-text);
+  background: #EFF5F1;
   padding: 4px 12px;
   border-radius: 50px;
   white-space: nowrap;
@@ -88,8 +88,8 @@
 .equipmentBadge {
   font-size: 12px;
   font-weight: 500;
-  color: #8A6A3A;
-  background: rgba(192, 137, 90, 0.12);
+  color: #7A5C2E;
+  background: #F7F1EB;
   padding: 4px 12px;
   border-radius: 50px;
   white-space: nowrap;
@@ -116,7 +116,7 @@
 }
 
 .tip strong {
-  color: var(--sage);
+  color: var(--sage-text);
 }
 
 .warning {
