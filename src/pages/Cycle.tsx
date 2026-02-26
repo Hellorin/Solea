@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { exercises } from '../data/exercises';
+import { PRESETS, getPresetExercises } from '../data/cycles';
+import type { CyclePreset } from '../data/cycles';
 import { saveSession } from '../utils/history';
 import styles from './Cycle.module.css';
 
-type View = 'pre' | 'running' | 'done';
+type View = 'pick' | 'running' | 'done';
 
 function fmt(secs: number): string {
   const m = Math.floor(secs / 60).toString().padStart(2, '0');
@@ -14,8 +15,8 @@ function fmt(secs: number): string {
 
 export default function Cycle() {
   const navigate = useNavigate();
-  const [includeStrength, setIncludeStrength] = useState(false);
-  const [view, setView] = useState<View>('pre');
+  const [view, setView] = useState<View>('pick');
+  const [selectedPreset, setSelectedPreset] = useState<CyclePreset | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [totalSecs, setTotalSecs] = useState(0);
   const [exSecs, setExSecs] = useState(0);
@@ -24,17 +25,7 @@ export default function Cycle() {
   const readyRef = useRef(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const list = [
-    ...exercises.filter(e => e.category === 'stretching'),
-    ...exercises.filter(e => e.category === 'mobility'),
-    ...(includeStrength ? exercises.filter(e => e.category === 'strengthening') : []),
-  ];
-
-  const stretchCount = exercises.filter(e => e.category === 'stretching').length;
-  const mobilityCount = exercises.filter(e => e.category === 'mobility').length;
-  const strengthCount = exercises.filter(e => e.category === 'strengthening').length;
-  const totalCount = stretchCount + mobilityCount + (includeStrength ? strengthCount : 0);
-  const estMins = Math.round(totalCount * 1.5);
+  const list = selectedPreset ? getPresetExercises(selectedPreset) : [];
 
   function startTick() {
     intervalRef.current = setInterval(() => {
@@ -54,7 +45,8 @@ export default function Cycle() {
     return () => pauseTick();
   }, []);
 
-  function handleStart() {
+  function handleStart(preset: CyclePreset) {
+    setSelectedPreset(preset);
     setCurrentIndex(0);
     setTotalSecs(0);
     setExSecs(0);
@@ -94,8 +86,12 @@ export default function Cycle() {
   }
 
   function handleRestart() {
+    if (selectedPreset) handleStart(selectedPreset);
+  }
+
+  function handlePickCycle() {
     pauseTick();
-    setView('pre');
+    setView('pick');
     setCurrentIndex(0);
     setTotalSecs(0);
     setExSecs(0);
@@ -104,56 +100,48 @@ export default function Cycle() {
     setPaused(false);
   }
 
-  if (view === 'pre') {
+  // PICK VIEW
+  if (view === 'pick') {
     return (
       <div className={styles.page}>
         <div className={styles.header}>
           <button className={styles.backBtn} onClick={() => navigate('/guide')}>
             ← Back
           </button>
-          <h1 className={styles.title}>Exercise Cycle</h1>
-          <p className={styles.subtitle}>Run through all exercises in sequence</p>
+          <h1 className={styles.title}>Exercise Cycles</h1>
+          <p className={styles.subtitle}>Choose a routine for the time of day</p>
         </div>
 
         <div className={styles.content}>
-          <div className={styles.card}>
-            <label className={styles.toggleRow}>
-              <span className={styles.toggleLabel}>
-                <span className={styles.toggleIcon}>💪</span>
-                Include strengthening exercises
-                <span className={styles.toggleNote}>Acute phase — skip if painful</span>
-              </span>
-              <button
-                role="switch"
-                aria-checked={includeStrength}
-                className={`${styles.toggle} ${includeStrength ? styles.toggleOn : ''}`}
-                onClick={() => setIncludeStrength(v => !v)}
-              >
-                <span className={styles.toggleThumb} />
-              </button>
-            </label>
-          </div>
-
-          <div className={styles.statsCard}>
-            <div className={styles.stat}>
-              <span className={styles.statValue}>{totalCount}</span>
-              <span className={styles.statLabel}>exercises</span>
-            </div>
-            <div className={styles.statDivider} />
-            <div className={styles.stat}>
-              <span className={styles.statValue}>~{estMins}</span>
-              <span className={styles.statLabel}>min estimated</span>
-            </div>
-          </div>
-
-          <button className={styles.btnPrimary} onClick={handleStart}>
-            Start Cycle
-          </button>
+          {PRESETS.map(preset => {
+            const exList = getPresetExercises(preset);
+            const estMins = Math.round(exList.length * 1.5);
+            return (
+              <div key={preset.id} className={styles.presetCard}>
+                <div className={styles.presetTop}>
+                  <span className={styles.presetEmoji}>{preset.emoji}</span>
+                  <div className={styles.presetInfo}>
+                    <span className={styles.presetLabel}>{preset.label}</span>
+                    <span className={styles.presetTagline}>{preset.tagline}</span>
+                  </div>
+                </div>
+                <div className={styles.presetMeta}>
+                  <span>{exList.length} exercises</span>
+                  <span className={styles.presetMetaDot}>·</span>
+                  <span>~{estMins} min</span>
+                </div>
+                <button className={styles.btnPrimary} onClick={() => handleStart(preset)}>
+                  Start
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
     );
   }
 
+  // RUNNING VIEW
   if (view === 'running') {
     const ex = list[currentIndex];
 
@@ -244,7 +232,7 @@ export default function Cycle() {
     );
   }
 
-  // done view
+  // DONE VIEW
   return (
     <div className={styles.page}>
       <div className={styles.content}>
@@ -269,8 +257,8 @@ export default function Cycle() {
         <button className={styles.btnPrimary} onClick={handleRestart}>
           Start Again
         </button>
-        <button className={styles.btnSecondary} onClick={() => navigate('/guide')}>
-          Back to Guide
+        <button className={styles.btnSecondary} onClick={handlePickCycle}>
+          Choose Cycle
         </button>
       </div>
     </div>
