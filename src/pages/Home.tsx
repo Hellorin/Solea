@@ -4,11 +4,22 @@ import { loadTimes } from '../utils/storage';
 import { requestPermission } from '../utils/notifications';
 import { getGreeting, getNextReminder } from '../utils/reminderUtils';
 import { getQuickStartPreset, getPresetExercises } from '../data/cycles';
+import { toLocalDateStr } from '../utils/statsUtils';
+import { getTodayPain, savePainEntry } from '../utils/painLog';
 import styles from './Home.module.css';
+
+const PAIN_EMOJIS = [
+  { level: 1, emoji: '😌', label: 'No pain' },
+  { level: 2, emoji: '😐', label: 'Mild pain' },
+  { level: 3, emoji: '😬', label: 'Moderate pain' },
+  { level: 4, emoji: '😣', label: 'Quite painful' },
+  { level: 5, emoji: '😭', label: 'Severe pain' },
+];
 
 export default function Home() {
   const [times, setTimes] = useState<string[]>([]);
   const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [todayPain, setTodayPain] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,7 +27,14 @@ export default function Home() {
     if ('Notification' in globalThis) {
       setPermission(Notification.permission);
     }
+    setTodayPain(getTodayPain(toLocalDateStr(new Date())));
   }, []);
+
+  function handlePainSelect(level: number) {
+    const today = toLocalDateStr(new Date());
+    savePainEntry(today, level);
+    setTodayPain(level);
+  }
 
   const nextReminder = getNextReminder(times, new Date());
   const quickStartCycle = getQuickStartPreset(new Date().getHours());
@@ -71,6 +89,27 @@ export default function Home() {
             <p className={styles.statLabel}>Today's reminders</p>
             <p className={styles.statValue}>{times.length}</p>
           </div>
+        </div>
+
+        <div className={styles.painCard}>
+          <p className={styles.painTitle}>How's your foot today?</p>
+          {todayPain === null ? (
+            <div className={styles.painEmojis}>
+              {PAIN_EMOJIS.map(({ level, emoji, label }) => (
+                <button key={level} className={styles.painBtn}
+                  aria-label={label} onClick={() => handlePainSelect(level)}>
+                  {emoji}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.painLogged}>
+              <span className={styles.painSelectedEmoji}>{PAIN_EMOJIS[todayPain - 1].emoji}</span>
+              <button className={styles.painChangeBtn} onClick={() => setTodayPain(null)}>
+                Change
+              </button>
+            </div>
+          )}
         </div>
 
         <div className={styles.quickStartCard}>

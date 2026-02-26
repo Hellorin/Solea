@@ -8,7 +8,104 @@ import {
   buildCalendarWeeks,
   formatDisplayDate,
 } from '../utils/statsUtils';
+import { loadPainLog } from '../utils/painLog';
+import type { PainEntry } from '../utils/painLog';
 import styles from './Stats.module.css';
+
+interface PainChartProps {
+  entries: PainEntry[];
+  today: string;
+}
+
+function PainChart({ entries, today }: PainChartProps) {
+  const W = 300;
+  const H = 80;
+  const PAD = { left: 4, right: 4, top: 8, bottom: 8 };
+  const chartW = W - PAD.left - PAD.right;
+  const chartH = H - PAD.top - PAD.bottom;
+
+  // Show last 30 days
+  const cutoff = new Date(today);
+  cutoff.setDate(cutoff.getDate() - 29);
+  const cutoffStr = `${cutoff.getFullYear()}-${String(cutoff.getMonth() + 1).padStart(2, '0')}-${String(cutoff.getDate()).padStart(2, '0')}`;
+
+  const visible = entries
+    .filter((e) => e.date >= cutoffStr && e.date <= today)
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  if (visible.length < 2) return null;
+
+  const dates = visible.map((e) => e.date);
+  const minDate = dates[0];
+  const maxDate = dates[dates.length - 1];
+  const minTime = new Date(minDate).getTime();
+  const maxTime = new Date(maxDate).getTime();
+  const timeRange = maxTime - minTime || 1;
+
+  function svgX(date: string) {
+    return PAD.left + ((new Date(date).getTime() - minTime) / timeRange) * chartW;
+  }
+  function svgY(level: number) {
+    return PAD.top + ((level - 1) / 4) * chartH;
+  }
+
+  const points = visible.map((e) => `${svgX(e.date)},${svgY(e.level)}`).join(' ');
+  const guideY = svgY(3);
+
+  const Y_AXIS = [
+    { level: 1, emoji: '😌' },
+    { level: 2, emoji: '😐' },
+    { level: 3, emoji: '😬' },
+    { level: 4, emoji: '😣' },
+    { level: 5, emoji: '😭' },
+  ];
+
+  return (
+    <div className={styles.painChartContainer}>
+      <div className={styles.painYAxis}>
+        {Y_AXIS.map(({ level, emoji }) => (
+          <span
+            key={level}
+            className={styles.painYLabel}
+            style={{ top: `${(svgY(level) / H) * 100}%` }}
+          >
+            {emoji}
+          </span>
+        ))}
+      </div>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="none"
+        width="100%"
+        height={H}
+        style={{ display: 'block', flex: 1 }}
+        aria-label="Pain trend chart"
+      >
+        {/* Dashed guideline at level 3 */}
+        <line
+          x1={PAD.left} y1={guideY} x2={W - PAD.right} y2={guideY}
+          stroke="var(--border)" strokeWidth="1" strokeDasharray="4 3"
+        />
+        {/* Pain line */}
+        <polyline
+          points={points}
+          fill="none"
+          className={styles.painLine}
+        />
+        {/* Dots */}
+        {visible.map((e) => (
+          <circle
+            key={e.date}
+            cx={svgX(e.date)}
+            cy={svgY(e.level)}
+            r="3.5"
+            className={styles.painDot}
+          />
+        ))}
+      </svg>
+    </div>
+  );
+}
 
 export default function Stats() {
   const today = toLocalDateStr(new Date());
@@ -32,6 +129,7 @@ export default function Stats() {
   }, [history]);
 
   const calendarWeeks = useMemo(() => buildCalendarWeeks(today), [today]);
+  const painLog = useMemo(() => loadPainLog(), []);
 
   const recentHistory = useMemo(
     () => [...history].reverse().slice(0, 20),
@@ -69,6 +167,14 @@ export default function Stats() {
             <p className={styles.statUnit}>days</p>
           </div>
         </div>
+
+        {/* Pain trend chart */}
+        {painLog.length >= 2 && (
+          <div className={styles.painCard}>
+            <p className={styles.sectionTitle}>Pain trend</p>
+            <PainChart entries={painLog} today={today} />
+          </div>
+        )}
 
         {/* Calendar heatmap */}
         <div className={styles.calendarCard}>

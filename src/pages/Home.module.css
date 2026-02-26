@@ -219,3 +219,68 @@
   font-size: 14px;
   font-style: italic;
 }
+
+/* Pain check-in card */
+.painCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 20px;
+}
+
+.painTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 14px;
+}
+
+.painEmojis {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.painBtn {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  font-size: 28px;
+  padding: 10px 0;
+  flex: 1;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+  line-height: 1;
+}
+
+.painBtn:active {
+  transform: scale(0.93);
+  border-color: var(--sage);
+}
+
+.painLogged {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.painSelectedEmoji {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.painChangeBtn {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.painChangeBtn:active {
+  border-color: var(--sage);
+}
