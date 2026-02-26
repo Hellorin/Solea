@@ -49,7 +49,7 @@ npm run preview   # serve the built dist/
 
 ## Verification after code generation
 1. Write unit tests to validate the code generated
-2. Verify by opening a browser that all features are actually well implemented and as expected.
+2. Verify by opening a browser that all features are actually well implemented and as expected. When you are done, don't forget to kill the dev environment you spawn for testing
 
 # Preview and Prod environment
 ```bash
