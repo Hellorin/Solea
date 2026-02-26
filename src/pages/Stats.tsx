@@ -71,14 +71,14 @@ function computeThisWeek(history: Session[], today: string): { done: number; ela
 }
 
 function buildCalendarWeeks(today: string): string[][] {
-  // Go back ~6 months (26 weeks), start on Monday
+  // Show last ~30 days: 5 full weeks (Mon–Sun)
   const d = new Date(today + 'T00:00:00');
   const dayOfWeek = d.getDay();
   const daysFromMon = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   // End on the Sunday of the current week
   const endSunday = addDays(today, 6 - daysFromMon);
-  // Start: 26 weeks back from endSunday
-  const startMonday = addDays(endSunday, -(26 * 7 - 1));
+  // Start: 5 weeks back from endSunday
+  const startMonday = addDays(endSunday, -(5 * 7 - 1));
 
   const weeks: string[][] = [];
   let iter = startMonday;
@@ -160,7 +160,7 @@ export default function Stats() {
 
         {/* Calendar heatmap */}
         <div className={styles.calendarCard}>
-          <p className={styles.sectionTitle}>Last 6 months</p>
+          <p className={styles.sectionTitle}>Last 30 days</p>
           <div className={styles.dayLabels}>
             {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
               <span key={i} className={styles.dayLabel}>{d}</span>
@@ -171,6 +171,7 @@ export default function Stats() {
               <div key={wi} className={styles.calendarRow}>
                 {week.map((date) => {
                   const count = sessionsByDate[date] ?? 0;
+                  const level = count === 0 ? 0 : count === 1 ? 1 : count === 2 ? 2 : 3;
                   const isToday = date === today;
                   const isFuture = date > today;
                   return (
@@ -179,7 +180,9 @@ export default function Stats() {
                       title={`${formatDisplayDate(date)}${count > 0 ? `: ${count} session${count > 1 ? 's' : ''}` : ''}`}
                       className={[
                         styles.dot,
-                        count > 0 ? styles.dotDone : '',
+                        level === 1 ? styles.dotLevel1 : '',
+                        level === 2 ? styles.dotLevel2 : '',
+                        level >= 3 ? styles.dotLevel3 : '',
                         isFuture ? styles.dotFuture : '',
                         isToday ? styles.dotToday : '',
                       ].filter(Boolean).join(' ')}

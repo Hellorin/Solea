@@ -97,8 +97,8 @@
 .dayLabels {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 3px;
-  margin-bottom: 6px;
+  gap: 2px;
+  margin-bottom: 4px;
 }
 
 .dayLabel {
@@ -111,43 +111,42 @@
 .calendarGrid {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .calendarRow {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 3px;
+  gap: 2px;
 }
 
 .dot {
   aspect-ratio: 1;
   width: 100%;
-  max-width: 14px;
-  justify-self: center;
-  border-radius: 50%;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
+  border-radius: 3px;
+  background: #e6e1db;
   transition: background 0.15s;
 }
 
-.dotDone {
+.dotLevel1 {
+  background: #b8d4c0;
+}
+
+.dotLevel2 {
   background: var(--sage);
-  border-color: var(--sage);
-  opacity: 0.85;
+}
+
+.dotLevel3 {
+  background: #4e8c66;
 }
 
 .dotFuture {
-  opacity: 0.3;
+  background: #ede9e4;
 }
 
 .dotToday {
-  box-shadow: 0 0 0 2px var(--blush);
-  border-color: var(--blush);
-}
-
-.dotDone.dotToday {
-  box-shadow: 0 0 0 2px var(--blush);
+  outline: 2px solid var(--blush, #d48c8c);
+  outline-offset: 1px;
 }
 
 /* Recent history */
