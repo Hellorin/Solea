@@ -123,16 +123,24 @@ export default function CycleBuilder() {
 
   // Step 2 — Select exercises
   if (step === 2) {
+    const allSelected = selectedIds.length === exercises.length;
+
     return (
       <div className={styles.page}>
         <div className={styles.header}>
           <button className={styles.backBtn} onClick={() => setStep(1)}>← Back</button>
           <h1 className={styles.title}>Select exercises</h1>
           <div className={styles.stepIndicator}>
-            Step 2 of 3
+            <span>Step 2 of 3</span>
             {selectedIds.length > 0 && (
               <span className={styles.badge}>{selectedIds.length} selected</span>
             )}
+            <button
+              className={styles.addAllBtn}
+              onClick={() => setSelectedIds(allSelected ? [] : exercises.map(e => e.id))}
+            >
+              {allSelected ? 'Remove all' : 'Add all'}
+            </button>
           </div>
         </div>
         <div className={styles.content}>
