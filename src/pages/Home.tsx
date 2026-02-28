@@ -27,20 +27,27 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setTimes(loadTimes());
-    if ('Notification' in globalThis) {
-      setPermission(Notification.permission);
+    async function load() {
+      const today = toLocalDateStr(new Date());
+      const [times, todayPain, history] = await Promise.all([
+        loadTimes(),
+        getTodayPain(today),
+        loadHistory(),
+      ]);
+      setTimes(times);
+      if ('Notification' in globalThis) {
+        setPermission(Notification.permission);
+      }
+      setTodayPain(todayPain);
+      setStreak(computeStreaks(history, today).current);
+      setWeeklyCount(computeThisWeek(history, today).done);
     }
-    const today = toLocalDateStr(new Date());
-    setTodayPain(getTodayPain(today));
-    const history = loadHistory();
-    setStreak(computeStreaks(history, today).current);
-    setWeeklyCount(computeThisWeek(history, today).done);
+    load();
   }, []);
 
-  function handlePainSelect(level: number) {
+  async function handlePainSelect(level: number) {
     const today = toLocalDateStr(new Date());
-    savePainEntry(today, level);
+    await savePainEntry(today, level);
     setTodayPain(level);
   }
 

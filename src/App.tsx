@@ -32,8 +32,8 @@ export default function App() {
   useEffect(() => {
     // On startup, request notification permission then refresh the 30-day schedule
     // so the rolling window stays current even if the user hasn't opened the app in a while.
-    requestPermission().then(granted => {
-      if (granted) scheduleNotifications(loadTimes());
+    requestPermission().then(async granted => {
+      if (granted) scheduleNotifications(await loadTimes());
     });
   }, []);
 

@@ -1,6 +1,6 @@
 const STORAGE_KEY = 'reminder_times';
 
-export function loadTimes(): string[] {
+export async function loadTimes(): Promise<string[]> {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]');
   } catch {
@@ -8,7 +8,7 @@ export function loadTimes(): string[] {
   }
 }
 
-export function saveTimes(times: string[]): void {
+export async function saveTimes(times: string[]): Promise<void> {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(times));
   } catch {

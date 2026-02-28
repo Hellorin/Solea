@@ -16,30 +16,30 @@ vi.stubGlobal('localStorage', localStorageMock);
 beforeEach(() => localStorageMock.clear());
 
 describe('loadHistory', () => {
-  it('returns empty array when key is missing', () => {
-    expect(loadHistory()).toEqual([]);
+  it('returns empty array when key is missing', async () => {
+    expect(await loadHistory()).toEqual([]);
   });
 
-  it('returns parsed sessions from valid JSON', () => {
+  it('returns parsed sessions from valid JSON', async () => {
     const sessions = [{ date: '2024-01-10', secs: 120, exerciseCount: 4, time: '08:30' }];
     localStorageMock.setItem('plantar_history', JSON.stringify(sessions));
-    expect(loadHistory()).toEqual(sessions);
+    expect(await loadHistory()).toEqual(sessions);
   });
 
-  it('returns empty array on malformed JSON', () => {
+  it('returns empty array on malformed JSON', async () => {
     localStorageMock.setItem('plantar_history', '{{invalid');
-    expect(loadHistory()).toEqual([]);
+    expect(await loadHistory()).toEqual([]);
   });
 });
 
 describe('saveSession', () => {
-  it('creates a session with correct shape and saves it', () => {
+  it('creates a session with correct shape and saves it', async () => {
     const now = new Date('2024-06-15T09:30:00');
     vi.setSystemTime(now);
 
-    saveSession(180, 5);
+    await saveSession(180, 5);
 
-    const saved = loadHistory();
+    const saved = await loadHistory();
     expect(saved).toHaveLength(1);
     expect(saved[0].date).toBe('2024-06-15');
     expect(saved[0].secs).toBe(180);
@@ -49,16 +49,16 @@ describe('saveSession', () => {
     vi.useRealTimers();
   });
 
-  it('appends to existing history', () => {
+  it('appends to existing history', async () => {
     const existing = [{ date: '2024-01-01', secs: 60, exerciseCount: 3, time: '08:00' }];
     localStorageMock.setItem('plantar_history', JSON.stringify(existing));
 
     const now = new Date('2024-06-15T10:00:00');
     vi.setSystemTime(now);
 
-    saveSession(90, 4);
+    await saveSession(90, 4);
 
-    const saved = loadHistory();
+    const saved = await loadHistory();
     expect(saved).toHaveLength(2);
     expect(saved[0].date).toBe('2024-01-01');
     expect(saved[1].secs).toBe(90);
@@ -66,11 +66,11 @@ describe('saveSession', () => {
     vi.useRealTimers();
   });
 
-  it('does not throw when localStorage throws', () => {
+  it('does not throw when localStorage throws', async () => {
     const spy = vi.spyOn(localStorageMock, 'setItem').mockImplementation(() => {
       throw new DOMException('QuotaExceededError');
     });
-    expect(() => saveSession(60, 3)).not.toThrow();
+    await expect(saveSession(60, 3)).resolves.not.toThrow();
     spy.mockRestore();
   });
 });

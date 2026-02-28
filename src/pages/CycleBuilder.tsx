@@ -60,7 +60,7 @@ export default function CycleBuilder() {
     setOrderedIds(sortByPTProtocol(orderedIds));
   }
 
-  function handleSave() {
+  async function handleSave() {
     const cycle: CustomCycle = {
       id: Date.now().toString(),
       label: name.trim(),
@@ -68,7 +68,7 @@ export default function CycleBuilder() {
       exerciseIds: orderedIds,
       createdAt: new Date().toISOString(),
     };
-    saveCustomCycle(cycle);
+    await saveCustomCycle(cycle);
     navigate('/cycle');
   }
 

@@ -2,7 +2,7 @@ export type PainEntry = { date: string; level: number };
 
 const KEY = 'pain_log';
 
-export function loadPainLog(): PainEntry[] {
+export async function loadPainLog(): Promise<PainEntry[]> {
   try {
     const raw = localStorage.getItem(KEY);
     return raw ? JSON.parse(raw) : [];
@@ -11,14 +11,14 @@ export function loadPainLog(): PainEntry[] {
   }
 }
 
-export function getTodayPain(today: string): number | null {
-  const log = loadPainLog();
+export async function getTodayPain(today: string): Promise<number | null> {
+  const log = await loadPainLog();
   const entry = log.find((e) => e.date === today);
   return entry ? entry.level : null;
 }
 
-export function savePainEntry(date: string, level: number): void {
-  const log = loadPainLog();
+export async function savePainEntry(date: string, level: number): Promise<void> {
+  const log = await loadPainLog();
   const idx = log.findIndex((e) => e.date === date);
   if (idx >= 0) {
     log[idx] = { date, level };

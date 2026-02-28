@@ -26,62 +26,62 @@ function makeCycle(id: string, label = 'Test'): CustomCycle {
 }
 
 describe('loadCustomCycles', () => {
-  it('returns [] when localStorage key is missing', () => {
-    expect(loadCustomCycles()).toEqual([]);
+  it('returns [] when localStorage key is missing', async () => {
+    expect(await loadCustomCycles()).toEqual([]);
   });
 
-  it('returns [] on malformed JSON (does not throw)', () => {
+  it('returns [] on malformed JSON (does not throw)', async () => {
     localStorageMock.setItem('custom_cycles', 'not-valid{{{');
-    expect(loadCustomCycles()).toEqual([]);
+    expect(await loadCustomCycles()).toEqual([]);
   });
 
-  it('returns parsed array on valid JSON', () => {
+  it('returns parsed array on valid JSON', async () => {
     const cycle = makeCycle('1');
     localStorageMock.setItem('custom_cycles', JSON.stringify([cycle]));
-    expect(loadCustomCycles()).toEqual([cycle]);
+    expect(await loadCustomCycles()).toEqual([cycle]);
   });
 });
 
 describe('saveCustomCycle', () => {
-  it('saves a new cycle (loadCustomCycles returns it)', () => {
+  it('saves a new cycle (loadCustomCycles returns it)', async () => {
     const cycle = makeCycle('abc');
-    saveCustomCycle(cycle);
-    expect(loadCustomCycles()).toEqual([cycle]);
+    await saveCustomCycle(cycle);
+    expect(await loadCustomCycles()).toEqual([cycle]);
   });
 
-  it('upserts an existing cycle by id (replaces, does not duplicate)', () => {
+  it('upserts an existing cycle by id (replaces, does not duplicate)', async () => {
     const original = makeCycle('x', 'Original');
     const updated = makeCycle('x', 'Updated');
-    saveCustomCycle(original);
-    saveCustomCycle(updated);
-    const all = loadCustomCycles();
+    await saveCustomCycle(original);
+    await saveCustomCycle(updated);
+    const all = await loadCustomCycles();
     expect(all).toHaveLength(1);
     expect(all[0].label).toBe('Updated');
   });
 
-  it('does not throw on quota exceeded', () => {
+  it('does not throw on quota exceeded', async () => {
     const spy = vi.spyOn(localStorageMock, 'setItem').mockImplementation(() => {
       throw new DOMException('QuotaExceededError');
     });
-    expect(() => saveCustomCycle(makeCycle('q'))).not.toThrow();
+    await expect(saveCustomCycle(makeCycle('q'))).resolves.not.toThrow();
     spy.mockRestore();
   });
 });
 
 describe('deleteCustomCycle', () => {
-  it('removes the correct cycle by id, leaves others intact', () => {
-    saveCustomCycle(makeCycle('1'));
-    saveCustomCycle(makeCycle('2'));
-    deleteCustomCycle('1');
-    const remaining = loadCustomCycles();
+  it('removes the correct cycle by id, leaves others intact', async () => {
+    await saveCustomCycle(makeCycle('1'));
+    await saveCustomCycle(makeCycle('2'));
+    await deleteCustomCycle('1');
+    const remaining = await loadCustomCycles();
     expect(remaining).toHaveLength(1);
     expect(remaining[0].id).toBe('2');
   });
 
-  it('is a no-op when id not found', () => {
-    saveCustomCycle(makeCycle('1'));
-    deleteCustomCycle('nonexistent');
-    expect(loadCustomCycles()).toHaveLength(1);
+  it('is a no-op when id not found', async () => {
+    await saveCustomCycle(makeCycle('1'));
+    await deleteCustomCycle('nonexistent');
+    expect(await loadCustomCycles()).toHaveLength(1);
   });
 });
 
