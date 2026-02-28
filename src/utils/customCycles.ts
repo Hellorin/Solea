@@ -4,7 +4,7 @@ import { exercises } from '../data/exercises';
 
 const KEY = 'custom_cycles';
 
-export function loadCustomCycles(): CustomCycle[] {
+export async function loadCustomCycles(): Promise<CustomCycle[]> {
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return [];
@@ -14,9 +14,9 @@ export function loadCustomCycles(): CustomCycle[] {
   }
 }
 
-export function saveCustomCycle(cycle: CustomCycle): void {
+export async function saveCustomCycle(cycle: CustomCycle): Promise<void> {
   try {
-    const existing = loadCustomCycles();
+    const existing = await loadCustomCycles();
     const idx = existing.findIndex(c => c.id === cycle.id);
     if (idx >= 0) {
       existing[idx] = cycle;
@@ -29,8 +29,8 @@ export function saveCustomCycle(cycle: CustomCycle): void {
   }
 }
 
-export function renameCustomCycle(id: string, newLabel: string): void {
-  const existing = loadCustomCycles();
+export async function renameCustomCycle(id: string, newLabel: string): Promise<void> {
+  const existing = await loadCustomCycles();
   const idx = existing.findIndex(c => c.id === id);
   if (idx >= 0) {
     existing[idx] = { ...existing[idx], label: newLabel };
@@ -38,8 +38,8 @@ export function renameCustomCycle(id: string, newLabel: string): void {
   }
 }
 
-export function deleteCustomCycle(id: string): void {
-  const existing = loadCustomCycles();
+export async function deleteCustomCycle(id: string): Promise<void> {
+  const existing = await loadCustomCycles();
   const filtered = existing.filter(c => c.id !== id);
   localStorage.setItem(KEY, JSON.stringify(filtered));
 }

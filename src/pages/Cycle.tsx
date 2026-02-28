@@ -106,7 +106,7 @@ export default function Cycle() {
   const location = useLocation();
   const [view, setView] = useState<View>('pick');
   const [activeCycle, setActiveCycle] = useState<CyclePreset | CustomCycle | null>(null);
-  const [customCycles, setCustomCycles] = useState<CustomCycle[]>(() => loadCustomCycles());
+  const [customCycles, setCustomCycles] = useState<CustomCycle[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [totalSecs, setTotalSecs] = useState(0);
   const [exSecs, setExSecs] = useState(0);
@@ -137,6 +137,10 @@ export default function Cycle() {
 
   useEffect(() => {
     return () => pauseTick();
+  }, []);
+
+  useEffect(() => {
+    loadCustomCycles().then(setCustomCycles);
   }, []);
 
   useEffect(() => {
@@ -184,9 +188,9 @@ export default function Cycle() {
   }
 
   // Step 4: Two focused functions instead of one mixed handleNext
-  function finishCycle() {
+  async function finishCycle() {
     pauseTick();
-    saveSession(totalSecs, list.length);
+    await saveSession(totalSecs, list.length);
     setView('done');
   }
 
@@ -196,8 +200,8 @@ export default function Cycle() {
     setReady(false);
   }
 
-  function handleNext() {
-    if (currentIndex + 1 >= list.length) finishCycle();
+  async function handleNext() {
+    if (currentIndex + 1 >= list.length) await finishCycle();
     else advanceExercise();
   }
 
@@ -215,10 +219,10 @@ export default function Cycle() {
     setPaused(false);
   }
 
-  function handleDeleteCustomCycle(id: string) {
+  async function handleDeleteCustomCycle(id: string) {
     if (globalThis.confirm('Delete this cycle?')) {
-      deleteCustomCycle(id);
-      setCustomCycles(loadCustomCycles());
+      await deleteCustomCycle(id);
+      setCustomCycles(await loadCustomCycles());
     }
   }
 
@@ -227,12 +231,12 @@ export default function Cycle() {
     setRenaming({ id: cycle.id, value: cycle.label });
   }
 
-  function handleRenameCommit() {
+  async function handleRenameCommit() {
     if (!renaming) return;
     const trimmed = renaming.value.trim();
     if (trimmed && trimmed !== customCycles.find(c => c.id === renaming.id)?.label) {
-      renameCustomCycle(renaming.id, trimmed);
-      setCustomCycles(loadCustomCycles());
+      await renameCustomCycle(renaming.id, trimmed);
+      setCustomCycles(await loadCustomCycles());
     }
     setRenaming(null);
   }

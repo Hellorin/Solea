@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { loadHistory } from '../utils/history';
+import type { Session } from '../utils/history';
 import {
   fmtDuration,
   toLocalDateStr,
@@ -109,7 +110,15 @@ function PainChart({ entries, today }: PainChartProps) {
 
 export default function Stats() {
   const today = toLocalDateStr(new Date());
-  const history = useMemo(() => loadHistory(), []);
+  const [history, setHistory] = useState<Session[]>([]);
+  const [painLog, setPainLog] = useState<PainEntry[]>([]);
+
+  useEffect(() => {
+    Promise.all([loadHistory(), loadPainLog()]).then(([h, p]) => {
+      setHistory(h);
+      setPainLog(p);
+    });
+  }, []);
 
   const { current: currentStreak, best: bestStreak } = useMemo(
     () => computeStreaks(history, today),
@@ -129,7 +138,6 @@ export default function Stats() {
   }, [history]);
 
   const calendarWeeks = useMemo(() => buildCalendarWeeks(today), [today]);
-  const painLog = useMemo(() => loadPainLog(), []);
 
   const recentHistory = useMemo(
     () => [...history].reverse().slice(0, 20),

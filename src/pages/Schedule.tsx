@@ -13,7 +13,7 @@ export default function Schedule() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setTimes(loadTimes());
+    loadTimes().then(setTimes);
   }, []);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function Schedule() {
     messageTimer.current = setTimeout(() => setMessage(null), 2500);
   }
 
-  function handleAdd() {
+  async function handleAdd() {
     if (!inputValue) return;
     const [h, m] = inputValue.split(':').map(Number);
     const totalMins = h * 60 + m;
@@ -45,16 +45,16 @@ export default function Schedule() {
 
     const newTimes = [...times, inputValue].sort((a, b) => a.localeCompare(b));
     setTimes(newTimes);
-    saveTimes(newTimes);
+    await saveTimes(newTimes);
     scheduleNotifications(newTimes);
     setInputValue('');
     setShowInput(false);
   }
 
-  function handleDelete(time: string) {
+  async function handleDelete(time: string) {
     const newTimes = times.filter(t => t !== time);
     setTimes(newTimes);
-    saveTimes(newTimes);
+    await saveTimes(newTimes);
     scheduleNotifications(newTimes);
   }
 
