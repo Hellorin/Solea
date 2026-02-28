@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { loadTimes } from '../utils/storage';
 import { requestPermission } from '../utils/notifications';
 import { getGreeting, getNextReminder } from '../utils/reminderUtils';
-import { getQuickStartPreset, getPresetExercises } from '../data/cycles';
-import { toLocalDateStr } from '../utils/statsUtils';
+import { PRESETS, getPresetExercises } from '../data/cycles';
+import { toLocalDateStr, computeStreaks, computeThisWeek } from '../utils/statsUtils';
 import { getTodayPain, savePainEntry } from '../utils/painLog';
+import { loadHistory } from '../utils/history';
+import { recommendCycle } from '../utils/recommendations';
 import styles from './Home.module.css';
 
 const PAIN_EMOJIS = [
@@ -20,6 +22,8 @@ export default function Home() {
   const [times, setTimes] = useState<string[]>([]);
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [todayPain, setTodayPain] = useState<number | null>(null);
+  const [streak, setStreak] = useState(0);
+  const [weeklyCount, setWeeklyCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,7 +31,11 @@ export default function Home() {
     if ('Notification' in globalThis) {
       setPermission(Notification.permission);
     }
-    setTodayPain(getTodayPain(toLocalDateStr(new Date())));
+    const today = toLocalDateStr(new Date());
+    setTodayPain(getTodayPain(today));
+    const history = loadHistory();
+    setStreak(computeStreaks(history, today).current);
+    setWeeklyCount(computeThisWeek(history, today).done);
   }, []);
 
   function handlePainSelect(level: number) {
@@ -37,7 +45,13 @@ export default function Home() {
   }
 
   const nextReminder = getNextReminder(times, new Date());
-  const quickStartCycle = getQuickStartPreset(new Date().getHours());
+  const recommendation = recommendCycle({
+    painLevel: todayPain,
+    streak,
+    weeklyCount,
+    hour: new Date().getHours(),
+  });
+  const quickStartCycle = PRESETS.find(p => p.id === recommendation.presetId)!;
   const quickStartExercises = getPresetExercises(quickStartCycle);
 
   async function handlePermissionBanner() {
@@ -117,7 +131,9 @@ export default function Home() {
             <span className={styles.quickStartEmoji}>{quickStartCycle.emoji}</span>
             <div className={styles.quickStartText}>
               <span className={styles.quickStartLabel}>{quickStartCycle.label}</span>
-              <span className={styles.quickStartTagline}>{quickStartCycle.tagline}</span>
+              <span className={styles.quickStartReason}>
+                {recommendation.reasonEmoji} {recommendation.reason}
+              </span>
               <span className={styles.quickStartCount}>{quickStartExercises.length} exercises</span>
             </div>
           </div>

@@ -144,6 +144,16 @@
   text-overflow: ellipsis;
 }
 
+.quickStartReason {
+  font-size: 12px;
+  color: var(--sage-text);
+  line-height: 1.4;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .quickStartCount {
   font-size: 11px;
   color: var(--sage-text);
