@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { exercises } from '../data/exercises';
 import type { Category } from '../data/exercises';
 import ExerciseCard from '../components/ExerciseCard';
@@ -23,8 +22,6 @@ const sections: Section[] = [
 ];
 
 export default function Guide() {
-  const navigate = useNavigate();
-
   return (
     <div className={styles.page}>
       <div className={styles.header}>
@@ -33,9 +30,6 @@ export default function Guide() {
       </div>
 
       <div className={styles.content}>
-        <button className={styles.startBtn} onClick={() => navigate('/cycle')}>
-          ▶ Start Cycle
-        </button>
         {sections.map(section => (
           <div key={section.key} className={styles.section}>
             <h2 className={styles.sectionTitle}>

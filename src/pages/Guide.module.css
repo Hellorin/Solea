@@ -59,22 +59,3 @@
   flex-direction: column;
   gap: 10px;
 }
-
-.startBtn {
-  background: var(--sage);
-  color: #FFFFFF;
-  font-size: 16px;
-  font-weight: 600;
-  padding: 16px 32px;
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-  text-align: center;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  width: 100%;
-}
-
-.startBtn:active {
-  transform: scale(0.97);
-  opacity: 0.9;
-}
