@@ -73,4 +73,30 @@ describe('saveSession', () => {
     expect(() => saveSession(60, 3)).not.toThrow();
     spy.mockRestore();
   });
+
+  it('saves cycleLabel when provided', () => {
+    const now = new Date('2024-06-15T09:30:00');
+    vi.setSystemTime(now);
+
+    saveSession(180, 5, 'Morning');
+
+    const saved = loadHistory();
+    expect(saved).toHaveLength(1);
+    expect(saved[0].cycleLabel).toBe('Morning');
+
+    vi.useRealTimers();
+  });
+
+  it('omits cycleLabel when not provided', () => {
+    const now = new Date('2024-06-15T09:30:00');
+    vi.setSystemTime(now);
+
+    saveSession(180, 5);
+
+    const saved = loadHistory();
+    expect(saved).toHaveLength(1);
+    expect(saved[0].cycleLabel).toBeUndefined();
+
+    vi.useRealTimers();
+  });
 });

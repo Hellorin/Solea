@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { exercises } from '../data/exercises';
 import type { Category } from '../data/exercises';
@@ -24,6 +25,11 @@ const sections: Section[] = [
 
 export default function Guide() {
   const navigate = useNavigate();
+  const [query, setQuery] = useState('');
+
+  const q = query.trim().toLowerCase();
+  const hasQuery = q.length > 0;
+  const anyResults = hasQuery && exercises.some(ex => ex.name.toLowerCase().includes(q));
 
   return (
     <div className={styles.page}>
@@ -33,30 +39,49 @@ export default function Guide() {
       </div>
 
       <div className={styles.content}>
+        <input
+          type="search"
+          className={styles.searchInput}
+          placeholder="Search exercises…"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          aria-label="Search exercises"
+        />
+
         <button className={styles.startBtn} onClick={() => navigate('/cycle')}>
           ▶ Start Cycle
         </button>
-        {sections.map(section => (
-          <div key={section.key} className={styles.section}>
-            <h2 className={styles.sectionTitle}>
-              <span>{section.icon}</span> {section.label}
-            </h2>
 
-            {section.note && (
-              <div className={styles.sectionNote}>
-                <span>⚠</span> {section.note}
-              </div>
-            )}
+        {hasQuery && !anyResults && (
+          <p className={styles.emptySearch}>No exercises match "{query.trim()}"</p>
+        )}
 
-            <div className={styles.cards}>
-              {exercises
-                .filter(ex => ex.category === section.key)
-                .map(ex => (
+        {sections.map(section => {
+          const sectionExercises = exercises.filter(ex =>
+            ex.category === section.key &&
+            (!hasQuery || ex.name.toLowerCase().includes(q))
+          );
+          if (sectionExercises.length === 0) return null;
+          return (
+            <div key={section.key} className={styles.section}>
+              <h2 className={styles.sectionTitle}>
+                <span>{section.icon}</span> {section.label}
+              </h2>
+
+              {!hasQuery && section.note && (
+                <div className={styles.sectionNote}>
+                  <span>⚠</span> {section.note}
+                </div>
+              )}
+
+              <div className={styles.cards}>
+                {sectionExercises.map(ex => (
                   <ExerciseCard key={ex.id} exercise={ex} />
                 ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

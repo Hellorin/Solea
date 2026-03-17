@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { type ReactNode, Fragment, useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useWakeLock } from '../hooks/useWakeLock';
 import { PRESETS, getPresetExercises, getCustomCycleExercises } from '../data/cycles';
@@ -10,6 +10,7 @@ import styles from './Cycle.module.css';
 
 type View = 'pick' | 'equipment' | 'running' | 'done';
 type RenameState = { id: string; value: string } | null;
+type DeleteConfirmState = { id: string; label: string } | null;
 
 const categoryClass: Record<string, string> = {
   stretching: 'catStretching',
@@ -114,6 +115,7 @@ export default function Cycle() {
   const { ready, readyRef, setReady } = useReadySync();   // Step 1
   const [expandedPreset, setExpandedPreset] = useState<string | null>(null);
   const [renaming, setRenaming] = useState<RenameState>(null); // Step 2
+  const [pendingDelete, setPendingDelete] = useState<DeleteConfirmState>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const wakeLockActive = view === 'running' && !paused;
@@ -186,7 +188,7 @@ export default function Cycle() {
   // Step 4: Two focused functions instead of one mixed handleNext
   function finishCycle() {
     pauseTick();
-    saveSession(totalSecs, list.length);
+    saveSession(totalSecs, list.length, activeCycle?.label);
     setView('done');
   }
 
@@ -215,11 +217,15 @@ export default function Cycle() {
     setPaused(false);
   }
 
-  function handleDeleteCustomCycle(id: string) {
-    if (globalThis.confirm('Delete this cycle?')) {
-      deleteCustomCycle(id);
-      setCustomCycles(loadCustomCycles());
-    }
+  function handleDeleteCustomCycle(id: string, label: string) {
+    setPendingDelete({ id, label });
+  }
+
+  function handleConfirmDelete() {
+    if (!pendingDelete) return;
+    deleteCustomCycle(pendingDelete.id);
+    setCustomCycles(loadCustomCycles());
+    setPendingDelete(null);
   }
 
   // Step 2: Consolidated rename handlers
@@ -299,18 +305,26 @@ export default function Cycle() {
               </div>
             );
             return (
-              <CycleCard
-                key={cycle.id}
-                emoji={cycle.emoji}
-                label={cycle.label}
-                subtitle={`${exList.length} exercises · ~${estMins} min`}
-                exList={exList}
-                expanded={expandedPreset === cycle.id}
-                onToggleExpand={() => setExpandedPreset(expandedPreset === cycle.id ? null : cycle.id)}
-                onStart={() => handleStart(cycle)}
-                renameControl={renameControl}
-                onDelete={() => handleDeleteCustomCycle(cycle.id)}
-              />
+              <Fragment key={cycle.id}>
+                <CycleCard
+                  emoji={cycle.emoji}
+                  label={cycle.label}
+                  subtitle={`${exList.length} exercises · ~${estMins} min`}
+                  exList={exList}
+                  expanded={expandedPreset === cycle.id}
+                  onToggleExpand={() => setExpandedPreset(expandedPreset === cycle.id ? null : cycle.id)}
+                  onStart={() => handleStart(cycle)}
+                  renameControl={renameControl}
+                  onDelete={() => handleDeleteCustomCycle(cycle.id, cycle.label)}
+                />
+                {pendingDelete?.id === cycle.id && (
+                  <div className={styles.deleteConfirm}>
+                    <span className={styles.deleteConfirmText}>Delete "{pendingDelete.label}"?</span>
+                    <button className={styles.deleteConfirmYes} onClick={handleConfirmDelete}>Delete</button>
+                    <button className={styles.deleteConfirmCancel} onClick={() => setPendingDelete(null)}>Cancel</button>
+                  </div>
+                )}
+              </Fragment>
             );
           })}
 

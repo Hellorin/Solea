@@ -7,14 +7,14 @@ function input(overrides: Partial<Parameters<typeof recommendCycle>[0]> = {}) {
 }
 
 describe('recommendCycle — pain-based (highest priority)', () => {
-  it('recommends morning for pain level 4', () => {
+  it('recommends acute for pain level 4', () => {
     const r = recommendCycle(input({ painLevel: 4 }));
-    expect(r.presetId).toBe('morning');
+    expect(r.presetId).toBe('acute');
   });
 
-  it('recommends morning for pain level 5', () => {
+  it('recommends acute for pain level 5', () => {
     const r = recommendCycle(input({ painLevel: 5 }));
-    expect(r.presetId).toBe('morning');
+    expect(r.presetId).toBe('acute');
   });
 
   it('recommends evening for pain level 3', () => {
@@ -32,9 +32,9 @@ describe('recommendCycle — pain-based (highest priority)', () => {
     expect(r.presetId).toBe('anytime');
   });
 
-  it('pain overrides time-of-day (morning pain at midday → morning)', () => {
+  it('pain overrides time-of-day (severe pain at midday → acute)', () => {
     const r = recommendCycle(input({ painLevel: 4, hour: 13 }));
-    expect(r.presetId).toBe('morning');
+    expect(r.presetId).toBe('acute');
   });
 
   it('pain overrides time-of-day (low pain in morning → rehab)', () => {

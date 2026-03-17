@@ -537,6 +537,57 @@
   color: #C0403A;
 }
 
+.deleteConfirm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(230, 57, 70, 0.06);
+  border: 1px solid rgba(230, 57, 70, 0.2);
+  border-radius: 14px;
+  margin-top: -4px;
+}
+
+.deleteConfirmText {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.deleteConfirmYes {
+  background: var(--error);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s ease;
+}
+
+.deleteConfirmYes:active {
+  opacity: 0.8;
+}
+
+.deleteConfirmCancel {
+  background: none;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.deleteConfirmCancel:active {
+  background: var(--border);
+}
+
 .createBtn {
   background: transparent;
   color: var(--sage-text);

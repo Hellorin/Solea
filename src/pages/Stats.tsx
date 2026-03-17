@@ -230,6 +230,7 @@ export default function Stats() {
                   <div className={styles.historyRight}>
                     <span className={styles.badge}>{fmtDuration(s.secs)}</span>
                     <span className={styles.badge}>{s.exerciseCount} exercises</span>
+                    {s.cycleLabel && <span className={styles.badge}>{s.cycleLabel}</span>}
                   </div>
                 </div>
               ))}

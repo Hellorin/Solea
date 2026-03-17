@@ -30,6 +30,18 @@ describe('getPresetExercises', () => {
     expect(resolved).toHaveLength(6);
   });
 
+  it('all IDs in the acute preset resolve to exercises', () => {
+    const acute = PRESETS.find(p => p.id === 'acute')!;
+    const resolved = getPresetExercises(acute);
+    expect(resolved).toHaveLength(acute.exerciseIds.length);
+    resolved.forEach(ex => expect(ex).toBeDefined());
+  });
+
+  it('acute preset contains exactly 6 exercises', () => {
+    const acute = PRESETS.find(p => p.id === 'acute')!;
+    expect(acute.exerciseIds).toHaveLength(6);
+  });
+
   it('resolved exercise IDs match the preset IDs (no silent drops)', () => {
     for (const preset of PRESETS) {
       const resolved = getPresetExercises(preset);

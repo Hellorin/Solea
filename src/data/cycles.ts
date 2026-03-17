@@ -1,7 +1,7 @@
 import type { Exercise } from './exercises';
 import { exercises } from './exercises';
 
-export type PresetId = 'morning' | 'anytime' | 'evening';
+export type PresetId = 'morning' | 'anytime' | 'evening' | 'acute';
 
 export interface CyclePreset {
   id: PresetId;
@@ -61,6 +61,20 @@ export const PRESETS: CyclePreset[] = [
       'toe-scrunch',       // intrinsic muscle activation
       'marble-pickups',    // coordination + intrinsic strength
       'heel-raise',        // seated — gentle close-out
+    ],
+  },
+  {
+    id: 'acute',
+    label: 'Acute Relief',
+    emoji: '🧊',
+    tagline: 'High-pain day — gentle care only, no loading',
+    exerciseIds: [
+      'toe-extension',     // plantar fascia stretch, non-weight-bearing
+      'towel-stretch',     // supine calf + arch lengthening
+      'calf-straight',     // static gastrocnemius stretch, low load
+      'calf-bent',         // static soleus stretch, low load
+      'ankle-circles',     // seated gentle range of motion
+      'tennis-ball-roll',  // seated self-massage, light pressure only
     ],
   },
 ];

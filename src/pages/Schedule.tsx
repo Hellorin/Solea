@@ -14,6 +14,7 @@ export default function Schedule() {
 
   useEffect(() => {
     setTimes(loadTimes());
+    return () => { if (messageTimer.current) clearTimeout(messageTimer.current); };
   }, []);
 
   useEffect(() => {

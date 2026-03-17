@@ -37,9 +37,9 @@ export function recommendCycle(input: RecommendationInput): Recommendation {
   if (painLevel !== null) {
     if (painLevel >= 4) {
       return {
-        presetId: 'morning',
-        reason: 'High pain today — gentle stretching only',
-        reasonEmoji: '🤕',
+        presetId: 'acute',
+        reason: 'Severe pain today — gentle relief only, no strengthening',
+        reasonEmoji: '🧊',
       };
     }
     if (painLevel === 3) {
