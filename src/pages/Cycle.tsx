@@ -11,12 +11,6 @@ import styles from './Cycle.module.css';
 type View = 'pick' | 'equipment' | 'running' | 'done';
 type RenameState = { id: string; value: string } | null;
 
-const categoryClass: Record<string, string> = {
-  stretching: 'catStretching',
-  mobility: 'catMobility',
-  strengthening: 'catStrengthening',
-};
-
 function fmt(secs: number): string {
   const m = Math.floor(secs / 60).toString().padStart(2, '0');
   const s = (secs % 60).toString().padStart(2, '0');
@@ -58,44 +52,33 @@ interface CycleCardProps {
   label: string;
   subtitle: string;
   exList: Exercise[];
-  expanded: boolean;
-  onToggleExpand: () => void;
   onStart: () => void;
   renameControl?: ReactNode;
   onDelete?: () => void;
 }
 
-function CycleCard({ emoji, label, subtitle, exList, expanded, onToggleExpand, onStart, renameControl, onDelete }: Readonly<CycleCardProps>) {
+function CycleCard({ emoji, label, subtitle, exList, onStart, renameControl, onDelete }: Readonly<CycleCardProps>) {
+  const previewNames = exList.slice(0, 3).map(ex => ex.name).join(', ');
+  const preview = exList.length > 3 ? `${previewNames} +${exList.length - 3} more` : previewNames;
+
   return (
     <div className={styles.presetCard}>
       <div className={styles.presetTop}>
         <span className={styles.presetEmoji}>{emoji}</span>
         <div className={styles.presetInfo}>
           {renameControl ?? <span className={styles.presetLabel}>{label}</span>}
-          <span className={styles.presetTagline}>{subtitle}</span>
+          {subtitle && <span className={styles.presetTagline}>{subtitle}</span>}
         </div>
         {onDelete && (
           <button className={styles.deleteBtn} onClick={onDelete} aria-label="Delete cycle">×</button>
         )}
       </div>
-      <button className={styles.presetMetaToggle} onClick={onToggleExpand}>
+      <div className={styles.presetMeta}>
         <span>{exList.length} exercises</span>
         <span className={styles.presetMetaDot}>·</span>
         <span>~{Math.round(exList.length * 1.5)} min</span>
-        <span className={`${styles.chevron} ${expanded ? styles.chevronOpen : ''}`}>›</span>
-      </button>
-      {expanded && (
-        <div className={styles.exerciseList}>
-          {exList.map(ex => (
-            <div key={ex.id} className={styles.exerciseListItem}>
-              <span className={styles.exerciseListName}>{ex.name}</span>
-              <span className={`${styles.categoryTag} ${styles[categoryClass[ex.category]]}`}>
-                {ex.category}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
+      </div>
+      <p className={styles.presetPreview}>{preview}</p>
       <button className={styles.btnPrimary} onClick={onStart}>Start</button>
     </div>
   );
@@ -112,7 +95,6 @@ export default function Cycle() {
   const [exSecs, setExSecs] = useState(0);
   const [paused, setPaused] = useState(false);
   const { ready, readyRef, setReady } = useReadySync();   // Step 1
-  const [expandedPreset, setExpandedPreset] = useState<string | null>(null);
   const [renaming, setRenaming] = useState<RenameState>(null); // Step 2
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -243,11 +225,8 @@ export default function Cycle() {
     return (
       <div className={styles.page}>
         <div className={styles.header}>
-          <button className={styles.backBtn} onClick={() => navigate('/guide')}>
-            ← Back
-          </button>
           <h1 className={styles.title}>Exercise Cycles</h1>
-          <p className={styles.subtitle}>Choose a routine for the time of day</p>
+          <p className={styles.subtitle}>Choose a routine for your session</p>
         </div>
 
         <div className={styles.content}>
@@ -260,8 +239,6 @@ export default function Cycle() {
                 label={preset.label}
                 subtitle={preset.tagline}
                 exList={exList}
-                expanded={expandedPreset === preset.id}
-                onToggleExpand={() => setExpandedPreset(expandedPreset === preset.id ? null : preset.id)}
                 onStart={() => handleStart(preset)}
               />
             );
@@ -275,7 +252,6 @@ export default function Cycle() {
 
           {customCycles.map(cycle => {
             const exList = getCustomCycleExercises(cycle);
-            const estMins = Math.round(exList.length * 1.5);
             const renameControl = renaming?.id === cycle.id ? (
               <input
                 className={styles.renameInput}
@@ -303,10 +279,8 @@ export default function Cycle() {
                 key={cycle.id}
                 emoji={cycle.emoji}
                 label={cycle.label}
-                subtitle={`${exList.length} exercises · ~${estMins} min`}
+                subtitle=""
                 exList={exList}
-                expanded={expandedPreset === cycle.id}
-                onToggleExpand={() => setExpandedPreset(expandedPreset === cycle.id ? null : cycle.id)}
                 onStart={() => handleStart(cycle)}
                 renameControl={renameControl}
                 onDelete={() => handleDeleteCustomCycle(cycle.id)}
