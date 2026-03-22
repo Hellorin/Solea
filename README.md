@@ -38,11 +38,13 @@ Solea was built this way. The entire app — exercise library, reminders, guided
 
 **Scheduled reminders** — set as many daily reminders as you want. The app notifies you when it's time to stretch, then gets out of the way.
 
-**Exercise guide** — 11 evidence-based exercises across three categories: stretching, mobility, and strengthening. Each has step-by-step instructions, timing guidance, and clinical tips. No account required to read them.
+**Exercise guide** — 18 evidence-based exercises across three categories: stretching, mobility, and strengthening. Each has step-by-step instructions, timing guidance, and clinical tips. No account required to read them.
 
-**Guided cycles** — step through all exercises in sequence with a built-in timer. Three presets (morning, anytime, evening) plus a custom cycle builder. Toggle strengthening exercises on/off depending on where you are in your recovery.
+**Guided cycles** — step through exercises in sequence with a built-in timer. Three presets (morning, anytime, evening), a quick-pick mode to run any combination of individual exercises, and a custom cycle builder. Toggle strengthening exercises on/off depending on where you are in your recovery.
 
-**Progress tracking** — streak counter, a 30-day activity heatmap, session history log, and a daily pain check-in (1–5 emoji scale) with a trend chart so you can see whether the routine is actually helping. Motivation without gamification nonsense.
+**Daily pain check-in** — log how your foot feels each day using a 1–5 emoji scale, right from the home screen. Feeds into a trend chart on the Progress page so you can see whether the routine is actually helping.
+
+**Progress tracking** — streak counter, a 30-day activity heatmap, and a session history log that shows which exercises you did each time. Motivation without gamification nonsense.
 
 **Installable PWA** — add it to your phone's home screen. Works offline. Screen stays awake during active sessions. No app store, no install size, no permissions you didn't ask for.
 
