@@ -3,12 +3,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useWakeLock } from '../hooks/useWakeLock';
 import { PRESETS, getPresetExercises, getCustomCycleExercises } from '../data/cycles';
 import type { CyclePreset, CustomCycle } from '../data/cycles';
-import type { Exercise } from '../data/exercises';
+import { exercises as allExercises } from '../data/exercises';
+import type { Exercise, Category } from '../data/exercises';
 import { saveSession } from '../utils/history';
 import { loadCustomCycles, deleteCustomCycle, renameCustomCycle } from '../utils/customCycles';
 import styles from './Cycle.module.css';
 
-type View = 'pick' | 'equipment' | 'running' | 'done';
+type View = 'pick' | 'quick-pick' | 'equipment' | 'running' | 'done';
 type RenameState = { id: string; value: string } | null;
 
 function fmt(secs: number): string {
@@ -89,6 +90,7 @@ export default function Cycle() {
   const location = useLocation();
   const [view, setView] = useState<View>('pick');
   const [activeCycle, setActiveCycle] = useState<CyclePreset | CustomCycle | null>(null);
+  const [quickExerciseIds, setQuickExerciseIds] = useState<string[]>([]);
   const [customCycles, setCustomCycles] = useState<CustomCycle[]>(() => loadCustomCycles());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [totalSecs, setTotalSecs] = useState(0);
@@ -101,7 +103,9 @@ export default function Cycle() {
   const wakeLockActive = view === 'running' && !paused;
   useWakeLock(wakeLockActive);
 
-  const list = activeCycle ? resolveList(activeCycle) : [];
+  const list = quickExerciseIds.length > 0
+    ? allExercises.filter(e => quickExerciseIds.includes(e.id))
+    : (activeCycle ? resolveList(activeCycle) : []);
 
   function startTick() {
     intervalRef.current = setInterval(() => {
@@ -184,17 +188,52 @@ export default function Cycle() {
   }
 
   function handleRestart() {
-    if (activeCycle) handleStart(activeCycle);
+    if (quickExerciseIds.length > 0) handleStartQuick();
+    else if (activeCycle) handleStart(activeCycle);
   }
 
   function handlePickCycle() {
     pauseTick();
     setView('pick');
+    setQuickExerciseIds([]);
     setCurrentIndex(0);
     setTotalSecs(0);
     setExSecs(0);
     setReady(false);
     setPaused(false);
+  }
+
+  function handleStartQuick() {
+    setActiveCycle(null);
+    setCurrentIndex(0);
+    setTotalSecs(0);
+    setExSecs(0);
+    setReady(false);
+    setPaused(false);
+    const exList = allExercises.filter(e => quickExerciseIds.includes(e.id));
+    const equipment = getUniqueEquipment(exList);
+    if (equipment.length > 0) {
+      setView('equipment');
+    } else {
+      setView('running');
+      startTick();
+    }
+  }
+
+  function toggleQuickExercise(id: string) {
+    setQuickExerciseIds(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  }
+
+  function toggleQuickCategory(key: Category) {
+    const catIds = allExercises.filter(e => e.category === key).map(e => e.id);
+    const allSelected = catIds.every(id => quickExerciseIds.includes(id));
+    if (allSelected) {
+      setQuickExerciseIds(prev => prev.filter(id => !catIds.includes(id)));
+    } else {
+      setQuickExerciseIds(prev => [...new Set([...prev, ...catIds])]);
+    }
   }
 
   function handleDeleteCustomCycle(id: string) {
@@ -230,6 +269,22 @@ export default function Cycle() {
         </div>
 
         <div className={styles.content}>
+          <div
+            className={styles.quickCycleCard}
+            onClick={() => { setQuickExerciseIds([]); setView('quick-pick'); }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setQuickExerciseIds([]); setView('quick-pick'); } }}
+          >
+            <div className={styles.quickCycleTop}>
+              <span className={styles.quickCycleEmoji}>⚡</span>
+              <div>
+                <p className={styles.quickCycleLabel}>Quick Cycle</p>
+                <p className={styles.quickCycleTagline}>Pick any exercises and start right away</p>
+              </div>
+            </div>
+          </div>
+
           {PRESETS.map(preset => {
             const exList = getPresetExercises(preset);
             return (
@@ -296,8 +351,60 @@ export default function Cycle() {
     );
   }
 
+  function renderQuickPickView() {
+    const QUICK_CATEGORIES: { key: Category; label: string; emoji: string }[] = [
+      { key: 'stretching', label: 'Stretching', emoji: '🧘' },
+      { key: 'mobility', label: 'Mobility', emoji: '🔄' },
+      { key: 'strengthening', label: 'Strengthening', emoji: '💪' },
+    ];
+    return (
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <button className={styles.backBtn} onClick={() => { setQuickExerciseIds([]); setView('pick'); }}>← Back</button>
+          <h1 className={styles.title}>Quick Cycle</h1>
+          <p className={styles.subtitle}>Pick exercises to include</p>
+        </div>
+        <div className={styles.content}>
+          {QUICK_CATEGORIES.map(({ key, label, emoji }) => {
+            const catExercises = allExercises.filter(e => e.category === key);
+            const allSelected = catExercises.every(e => quickExerciseIds.includes(e.id));
+            return (
+              <div key={key} className={styles.categorySection}>
+                <div className={styles.categoryHeader}>
+                  <span>{emoji} {label}</span>
+                  <button className={styles.selectAllBtn} onClick={() => toggleQuickCategory(key)}>
+                    {allSelected ? 'Deselect all' : 'Select all'}
+                  </button>
+                </div>
+                {catExercises.map(ex => (
+                  <label key={ex.id} className={styles.exerciseCheckItem}>
+                    <input
+                      type="checkbox"
+                      checked={quickExerciseIds.includes(ex.id)}
+                      onChange={() => toggleQuickExercise(ex.id)}
+                    />
+                    <span className={styles.exerciseCheckName}>{ex.name}</span>
+                    <span className={styles.exerciseCheckMeta}>{ex.duration}</span>
+                  </label>
+                ))}
+              </div>
+            );
+          })}
+          <button
+            className={styles.btnPrimary}
+            disabled={quickExerciseIds.length === 0}
+            onClick={handleStartQuick}
+          >
+            {quickExerciseIds.length > 0 ? `Start (${quickExerciseIds.length})` : 'Select exercises to start'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   function renderEquipmentView() {
     const equipment = getUniqueEquipment(list);
+    const cycleName = quickExerciseIds.length > 0 ? '⚡ Quick Cycle' : `${activeCycle?.emoji} ${activeCycle?.label}`;
     return (
       <div className={styles.page}>
         <div className={styles.header}>
@@ -307,7 +414,7 @@ export default function Cycle() {
           <div className={styles.equipmentScreen}>
             <span className={styles.equipmentHeroEmoji}>🎒</span>
             <h1 className={styles.equipmentTitle}>Grab your equipment</h1>
-            <p className={styles.equipmentCycleName}>{activeCycle?.emoji} {activeCycle?.label}</p>
+            <p className={styles.equipmentCycleName}>{cycleName}</p>
             <p className={styles.equipmentSub}>
               This cycle needs a few items. Take a moment to gather them before you start.
             </p>
@@ -445,8 +552,9 @@ export default function Cycle() {
   }
 
   // Step 6: Dispatch
-  if (view === 'pick')      return renderPickView();
-  if (view === 'equipment') return renderEquipmentView();
-  if (view === 'running')   return renderRunningView();
+  if (view === 'pick')       return renderPickView();
+  if (view === 'quick-pick') return renderQuickPickView();
+  if (view === 'equipment')  return renderEquipmentView();
+  if (view === 'running')    return renderRunningView();
   return renderDoneView();
 }
