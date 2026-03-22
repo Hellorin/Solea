@@ -36,8 +36,6 @@ Solea was built this way. The entire app — exercise library, reminders, guided
 
 ## What Solea does
 
-**Scheduled reminders** — set as many daily reminders as you want. The app notifies you when it's time to stretch, then gets out of the way.
-
 **Exercise guide** — 18 evidence-based exercises across three categories: stretching, mobility, and strengthening. Each has step-by-step instructions, timing guidance, and clinical tips. No account required to read them.
 
 **Guided cycles** — step through exercises in sequence with a built-in timer. Three presets (morning, anytime, evening), a quick-pick mode to run any combination of individual exercises, and a custom cycle builder. Toggle strengthening exercises on/off depending on where you are in your recovery.
@@ -57,7 +55,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173`, add to home screen on mobile, and start your recovery.
+Open `http://localhost:5173`, and start your recovery.
 
 ---
 
