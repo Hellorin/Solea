@@ -37,13 +37,15 @@ describe('saveSession', () => {
     const now = new Date('2024-06-15T09:30:00');
     vi.setSystemTime(now);
 
-    saveSession(180, 5);
+    const names = ['Calf Stretch', 'Toe Extension', 'Heel Drop', 'Ankle Circles', 'Marble Pickups'];
+    saveSession(180, names);
 
     const saved = loadHistory();
     expect(saved).toHaveLength(1);
     expect(saved[0].date).toBe('2024-06-15');
     expect(saved[0].secs).toBe(180);
     expect(saved[0].exerciseCount).toBe(5);
+    expect(saved[0].exerciseNames).toEqual(names);
     expect(saved[0].time).toMatch(/^\d{2}:\d{2}$/);
 
     vi.useRealTimers();
@@ -56,12 +58,13 @@ describe('saveSession', () => {
     const now = new Date('2024-06-15T10:00:00');
     vi.setSystemTime(now);
 
-    saveSession(90, 4);
+    saveSession(90, ['Ex A', 'Ex B', 'Ex C', 'Ex D']);
 
     const saved = loadHistory();
     expect(saved).toHaveLength(2);
     expect(saved[0].date).toBe('2024-01-01');
     expect(saved[1].secs).toBe(90);
+    expect(saved[1].exerciseCount).toBe(4);
 
     vi.useRealTimers();
   });
@@ -70,7 +73,7 @@ describe('saveSession', () => {
     const spy = vi.spyOn(localStorageMock, 'setItem').mockImplementation(() => {
       throw new DOMException('QuotaExceededError');
     });
-    expect(() => saveSession(60, 3)).not.toThrow();
+    expect(() => saveSession(60, ['Ex A', 'Ex B', 'Ex C'])).not.toThrow();
     spy.mockRestore();
   });
 });

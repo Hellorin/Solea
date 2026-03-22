@@ -172,7 +172,7 @@ export default function Cycle() {
   // Step 4: Two focused functions instead of one mixed handleNext
   function finishCycle() {
     pauseTick();
-    saveSession(totalSecs, list.length);
+    saveSession(totalSecs, list.map(e => e.name));
     setView('done');
   }
 

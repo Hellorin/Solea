@@ -223,14 +223,23 @@ export default function Stats() {
             <div className={styles.historyList}>
               {recentHistory.map((s, i) => (
                 <div key={i} className={styles.historyCard}>
-                  <div className={styles.historyLeft}>
-                    <p className={styles.historyDate}>{formatDisplayDate(s.date)}</p>
-                    <p className={styles.historyTime}>{s.time}</p>
+                  <div className={styles.historyTop}>
+                    <div className={styles.historyLeft}>
+                      <p className={styles.historyDate}>{formatDisplayDate(s.date)}</p>
+                      <p className={styles.historyTime}>{s.time}</p>
+                    </div>
+                    <div className={styles.historyRight}>
+                      <span className={styles.badge}>{fmtDuration(s.secs)}</span>
+                      <span className={styles.badge}>{s.exerciseCount} exercises</span>
+                    </div>
                   </div>
-                  <div className={styles.historyRight}>
-                    <span className={styles.badge}>{fmtDuration(s.secs)}</span>
-                    <span className={styles.badge}>{s.exerciseCount} exercises</span>
-                  </div>
+                  {s.exerciseNames && s.exerciseNames.length > 0 && (
+                    <div className={styles.exerciseNames}>
+                      {s.exerciseNames.map((name, j) => (
+                        <span key={j} className={styles.exerciseName}>{name}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
