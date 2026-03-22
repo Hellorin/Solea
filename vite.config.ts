@@ -10,7 +10,7 @@ export default defineConfig({
       manifest: {
         name: 'Solea',
         short_name: 'Solea',
-        description: 'Plantar fascia recovery reminders and exercise guide',
+        description: 'Plantar fascia recovery exercise guide and session tracking',
         theme_color: '#7BAF8E',
         background_color: '#F9F6F1',
         start_url: '/',

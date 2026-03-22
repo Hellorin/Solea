@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loadTimes } from '../utils/storage';
-import { requestPermission } from '../utils/notifications';
-import { getGreeting, getNextReminder } from '../utils/reminderUtils';
+import { getGreeting } from '../utils/reminderUtils';
 import { PRESETS, getPresetExercises } from '../data/cycles';
 import { toLocalDateStr, computeStreaks, computeThisWeek } from '../utils/statsUtils';
 import { getTodayPain, savePainEntry } from '../utils/painLog';
@@ -19,18 +17,12 @@ const PAIN_EMOJIS = [
 ];
 
 export default function Home() {
-  const [times, setTimes] = useState<string[]>([]);
-  const [permission, setPermission] = useState<NotificationPermission>('default');
   const [todayPain, setTodayPain] = useState<number | null>(null);
   const [streak, setStreak] = useState(0);
   const [weeklyCount, setWeeklyCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setTimes(loadTimes());
-    if ('Notification' in globalThis) {
-      setPermission(Notification.permission);
-    }
     const today = toLocalDateStr(new Date());
     setTodayPain(getTodayPain(today));
     const history = loadHistory();
@@ -44,7 +36,6 @@ export default function Home() {
     setTodayPain(level);
   }
 
-  const nextReminder = getNextReminder(times, new Date());
   const recommendation = recommendCycle({
     painLevel: todayPain,
     streak,
@@ -53,11 +44,6 @@ export default function Home() {
   });
   const quickStartCycle = PRESETS.find(p => p.id === recommendation.presetId)!;
   const quickStartExercises = getPresetExercises(quickStartCycle);
-
-  async function handlePermissionBanner() {
-    const granted = await requestPermission();
-    setPermission(granted ? 'granted' : 'denied');
-  }
 
   return (
     <div className={styles.page}>
@@ -85,26 +71,7 @@ export default function Home() {
         </div>
       </div>
 
-      {permission === 'denied' && (
-        <button className={styles.permissionBanner} onClick={handlePermissionBanner}>
-          Reminders are disabled. Tap here to open notification settings.
-        </button>
-      )}
-
       <div className={styles.content}>
-        <div className={styles.statsRow}>
-          <div className={styles.statCard}>
-            <p className={styles.statLabel}>Next reminder</p>
-            <p className={styles.statValue}>
-              {nextReminder ?? '—'}
-            </p>
-          </div>
-          <div className={styles.statCard}>
-            <p className={styles.statLabel}>Today's reminders</p>
-            <p className={styles.statValue}>{times.length}</p>
-          </div>
-        </div>
-
         <div className={styles.painCard}>
           <p className={styles.painTitle}>How's your foot today?</p>
           {todayPain === null ? (
@@ -148,9 +115,6 @@ export default function Home() {
         <div className={styles.actions}>
           <button className={styles.btnPrimary} onClick={() => navigate('/guide')}>
             View Exercises
-          </button>
-          <button className={styles.btnSecondary} onClick={() => navigate('/schedule')}>
-            Manage Schedule
           </button>
         </div>
 

@@ -8,11 +8,7 @@ export default function BottomNav() {
         <span className={styles.icon}>🏠</span>
         <span className={styles.label}>Home</span>
       </NavLink>
-      <NavLink to="/schedule" className={({ isActive }) => isActive ? `${styles.tab} ${styles.active}` : styles.tab}>
-        <span className={styles.icon}>🕐</span>
-        <span className={styles.label}>Schedule</span>
-      </NavLink>
-      <NavLink to="/guide" className={({ isActive }) => isActive ? `${styles.tab} ${styles.active}` : styles.tab}>
+<NavLink to="/guide" className={({ isActive }) => isActive ? `${styles.tab} ${styles.active}` : styles.tab}>
         <span className={styles.icon}>🧘</span>
         <span className={styles.label}>Exercises</span>
       </NavLink>
