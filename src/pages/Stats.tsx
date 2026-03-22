@@ -132,7 +132,7 @@ export default function Stats() {
   const painLog = useMemo(() => loadPainLog(), []);
 
   const recentHistory = useMemo(
-    () => [...history].reverse().slice(0, 20),
+    () => [...history].reverse().slice(0, 10),
     [history]
   );
 
