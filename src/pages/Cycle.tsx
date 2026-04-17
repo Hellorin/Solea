@@ -126,7 +126,31 @@ export default function Cycle() {
   }, []);
 
   useEffect(() => {
-    const id = (location.state as { quickStart?: string } | null)?.quickStart;
+    const state = location.state as {
+      quickStart?: string;
+      prescribedIds?: string[];
+      prescribedLabel?: string;
+      prescribedEmoji?: string;
+      fromRehab?: boolean;
+    } | null;
+    if (state?.prescribedIds && state.prescribedIds.length > 0) {
+      setQuickExerciseIds(state.prescribedIds);
+      setActiveCycle(null);
+      setCurrentIndex(0);
+      setTotalSecs(0);
+      setExSecs(0);
+      setReady(false);
+      setPaused(false);
+      const exList = allExercises.filter(e => state.prescribedIds!.includes(e.id));
+      const equipment = getUniqueEquipment(exList);
+      if (equipment.length > 0) setView('equipment');
+      else {
+        setView('running');
+        startTick();
+      }
+      return;
+    }
+    const id = state?.quickStart;
     if (id) {
       const preset = PRESETS.find(p => p.id === id);
       if (preset) handleStart(preset);
@@ -173,6 +197,11 @@ export default function Cycle() {
   function finishCycle() {
     pauseTick();
     saveSession(totalSecs, list.map(e => e.name));
+    const fromRehab = (location.state as { fromRehab?: boolean } | null)?.fromRehab;
+    if (fromRehab) {
+      navigate('/rehab/checkin');
+      return;
+    }
     setView('done');
   }
 

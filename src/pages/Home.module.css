@@ -95,6 +95,49 @@
   font-family: 'DM Serif Display', serif;
 }
 
+.rehabBanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1.5px solid var(--sage);
+  border-radius: 16px;
+  padding: 12px 16px;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.15s ease;
+}
+
+.rehabBanner:active {
+  transform: scale(0.98);
+}
+
+.rehabBannerIcon {
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.rehabBannerText {
+  flex: 1;
+  text-align: left;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.rehabBannerText strong {
+  font-weight: 600;
+  color: var(--sage-text);
+}
+
+.rehabBannerArrow {
+  color: var(--sage-text);
+  font-size: 18px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
 .quickStartCard {
   background: var(--surface);
   border: 1.5px solid var(--sage);
