@@ -9,6 +9,7 @@ import {
   hasActiveProgram,
   checkMissedDays,
   consecutiveBetterCount,
+  markSessionDone,
   PROGRAM_DAYS,
   type RehabProgram,
   type Feedback,
@@ -304,6 +305,34 @@ describe('checkMissedDays', () => {
     // After completing day 1 on 04-17, checking on 04-19 should be 1 missed (grace).
     const { missed } = checkMissedDays(p, '2026-04-19');
     expect(missed).toBe(1);
+  });
+});
+
+describe('markSessionDone', () => {
+  it('marks the current day as session-done without advancing', () => {
+    const p = createProgram({ initialPain: 3, duration: 'subacute' }, '2026-04-17');
+    const updated = markSessionDone(p, '2026-04-17');
+    expect(updated.currentDay).toBe(1);
+    expect(updated.days[0].sessionDone).toBe(true);
+    expect(updated.days[0].sessionDate).toBe('2026-04-17');
+    expect(updated.days[0].completed).toBe(false);
+  });
+
+  it('does not mutate other days', () => {
+    const p = createProgram({ initialPain: 3, duration: 'subacute' }, '2026-04-17');
+    const updated = markSessionDone(p, '2026-04-17');
+    expect(updated.days[1].sessionDone).toBeUndefined();
+    expect(updated.days[29].sessionDone).toBeUndefined();
+  });
+
+  it('computeNextDay clears the check-in gating after feedback', () => {
+    let p = createProgram({ initialPain: 3, duration: 'subacute' }, '2026-04-17');
+    p = markSessionDone(p, '2026-04-17');
+    p = computeNextDay(p, 'better', 2, '2026-04-18');
+    expect(p.currentDay).toBe(2);
+    expect(p.days[0].completed).toBe(true);
+    expect(p.days[0].feedback).toBe('better');
+    expect(p.days[1].sessionDone).toBeFalsy();
   });
 });
 

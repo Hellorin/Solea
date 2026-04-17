@@ -7,6 +7,8 @@ import { exercises as allExercises } from '../data/exercises';
 import type { Exercise, Category } from '../data/exercises';
 import { saveSession } from '../utils/history';
 import { loadCustomCycles, deleteCustomCycle, renameCustomCycle } from '../utils/customCycles';
+import { loadProgram, saveProgram, markSessionDone } from '../utils/rehabProgram';
+import { toLocalDateStr } from '../utils/statsUtils';
 import styles from './Cycle.module.css';
 
 type View = 'pick' | 'quick-pick' | 'equipment' | 'running' | 'done';
@@ -199,7 +201,11 @@ export default function Cycle() {
     saveSession(totalSecs, list.map(e => e.name));
     const fromRehab = (location.state as { fromRehab?: boolean } | null)?.fromRehab;
     if (fromRehab) {
-      navigate('/rehab/checkin');
+      const program = loadProgram();
+      if (program && program.active) {
+        saveProgram(markSessionDone(program, toLocalDateStr(new Date())));
+      }
+      navigate('/rehab');
       return;
     }
     setView('done');

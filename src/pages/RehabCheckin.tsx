@@ -40,8 +40,8 @@ export default function RehabCheckin() {
     <div className={styles.page}>
       <div className={styles.header}>
         <button className={styles.backBtn} onClick={() => navigate('/rehab')}>← Back</button>
-        <h1 className={styles.title}>How did today feel?</h1>
-        <p className={styles.subtitle}>We'll use this to plan tomorrow.</p>
+        <h1 className={styles.title}>How are you feeling?</h1>
+        <p className={styles.subtitle}>This picks the right exercises for your next session.</p>
       </div>
       <div className={styles.content}>
         <div>

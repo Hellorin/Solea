@@ -16,6 +16,8 @@ export type RehabDay = {
   phase: Phase;
   exerciseIds: string[];
   completed: boolean;
+  sessionDone?: boolean;
+  sessionDate?: string;
   painBefore?: number;
   painAfter?: number;
   feedback?: Feedback;
@@ -69,6 +71,17 @@ export function clearProgram(): void {
 export function hasActiveProgram(): boolean {
   const p = loadProgram();
   return !!p && p.active;
+}
+
+// Marks the session (exercises) for the current day as done, without
+// advancing the program or collecting feedback. The check-in that drives
+// the next day's prescription is deferred until the user returns to the
+// Rehab hub.
+export function markSessionDone(program: RehabProgram, today: string): RehabProgram {
+  const idx = program.currentDay - 1;
+  const days = [...program.days];
+  days[idx] = { ...days[idx], sessionDone: true, sessionDate: today };
+  return { ...program, days };
 }
 
 function initialPhase(answers: OnboardingAnswers): Phase {

@@ -12,7 +12,6 @@ import {
 import { exercises as allExercises } from '../data/exercises';
 import type { Phase } from '../data/cycles';
 import { toLocalDateStr } from '../utils/statsUtils';
-import { loadHistory } from '../utils/history';
 import styles from './Rehab.module.css';
 
 const PHASE_LABEL: Record<Phase, string> = {
@@ -37,15 +36,10 @@ function nameFor(id: string): string {
   return allExercises.find(e => e.id === id)?.name ?? id;
 }
 
-function didSessionToday(today: string): boolean {
-  return loadHistory().some(s => s.date === today);
-}
-
 export default function Rehab() {
   const navigate = useNavigate();
   const [program, setProgram] = useState<RehabProgram | null>(null);
   const [today] = useState(() => toLocalDateStr(new Date()));
-  const [sessionToday, setSessionToday] = useState(false);
 
   useEffect(() => {
     const p = loadProgram();
@@ -61,7 +55,6 @@ export default function Rehab() {
     } else {
       setProgram(p);
     }
-    setSessionToday(didSessionToday(today));
   }, [today]);
 
   function handleStart() {
@@ -112,7 +105,7 @@ export default function Rehab() {
           ? renderNoProgram(handleStart, program)
           : program.paused
             ? renderPaused(handleResume, handleAbandon)
-            : renderActive(program, today, sessionToday, handleStartSession, handleCheckin)}
+            : renderActive(program, handleStartSession, handleCheckin)}
 
         {program && program.active && renderGrid(program)}
 
@@ -160,30 +153,24 @@ function renderPaused(onResume: () => void, onAbandon: () => void) {
 
 function renderActive(
   program: RehabProgram,
-  today: string,
-  sessionToday: boolean,
   onStartSession: (day: RehabDay) => void,
   onCheckin: () => void,
 ) {
   const day = program.days[program.currentDay - 1];
-  // Check-in pending: user completed a session today (saved to history) but
-  // hasn't submitted feedback, so the current day isn't marked completed yet.
-  const checkinPending = sessionToday && !day.completed;
 
-  if (checkinPending) {
+  // Check-in pending: the day's session has been completed but no feedback
+  // submitted yet. The check-in gates the next day's exercise prescription,
+  // so we surface it as the primary action.
+  if (day.sessionDone && !day.completed) {
     return (
-      <div className={styles.banner}>
-        <span>How did today feel? Log a check-in to plan tomorrow.</span>
-        <button className={styles.bannerBtn} onClick={onCheckin}>Log check-in</button>
-      </div>
-    );
-  }
-
-  // If the current day is already completed (check-in submitted), show "done for today" card.
-  if (day.completed && day.date === today) {
-    return (
-      <div className={styles.bannerDone}>
-        ✓ Done for today — see you tomorrow.
+      <div className={styles.todayCard}>
+        <p className={styles.reason}>
+          Nice work — day {day.day}'s session is done. A quick check-in will pick
+          the right exercises for day {day.day + 1}.
+        </p>
+        <button className={styles.startBtn} onClick={onCheckin}>
+          Log today's check-in
+        </button>
       </div>
     );
   }
