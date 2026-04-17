@@ -257,19 +257,20 @@ function renderGrid(program: RehabProgram) {
       <div className={styles.grid}>
         {program.days.map(d => {
           const isToday = d.day === program.currentDay;
+          const filled = d.sessionDone || d.completed;
           const cls = [
             styles.dot,
-            d.completed ? PHASE_DOT[d.phase] : '',
-            d.completed ? styles.dotCompleted : '',
+            filled ? PHASE_DOT[d.phase] : '',
+            filled ? styles.dotCompleted : '',
             isToday ? styles.dotToday : '',
           ].filter(Boolean).join(' ');
           return (
             <div
               key={d.day}
               className={cls}
-              title={`Day ${d.day}${d.completed ? ` · ${PHASE_LABEL[d.phase]}` : ''}`}
+              title={`Day ${d.day}${filled ? ` · ${PHASE_LABEL[d.phase]}` : ''}`}
             >
-              {!d.completed ? d.day : null}
+              {!filled ? d.day : null}
             </div>
           );
         })}
