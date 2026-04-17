@@ -11,8 +11,15 @@ import {
 } from '../utils/rehabProgram';
 import { exercises as allExercises } from '../data/exercises';
 import type { Phase } from '../data/cycles';
-import { toLocalDateStr } from '../utils/statsUtils';
+import { toLocalDateStr, formatDisplayDate } from '../utils/statsUtils';
+import { PAIN_EMOJIS } from '../data/pain';
 import styles from './Rehab.module.css';
+
+const FEEDBACK_META: Record<'worse' | 'same' | 'better', { emoji: string; label: string }> = {
+  worse: { emoji: '😣', label: 'Worse' },
+  same: { emoji: '😐', label: 'Same' },
+  better: { emoji: '🙂', label: 'Better' },
+};
 
 const PHASE_LABEL: Record<Phase, string> = {
   relief: 'Pain relief',
@@ -107,6 +114,8 @@ export default function Rehab() {
             ? renderPaused(handleResume, handleAbandon)
             : renderActive(program, handleStartSession, handleCheckin)}
 
+        {program && program.active && !program.paused && renderLastCheckin(program)}
+
         {program && program.active && renderGrid(program)}
 
         {program && program.active && (
@@ -195,6 +204,36 @@ function renderActive(
       <button className={styles.startBtn} onClick={() => onStartSession(day)}>
         Start today's session
       </button>
+    </div>
+  );
+}
+
+function renderLastCheckin(program: RehabProgram) {
+  // Find the most recent completed day with a submitted check-in.
+  const last = [...program.days]
+    .slice(0, program.currentDay)
+    .reverse()
+    .find(d => d.completed && d.feedback && d.painAfter);
+  if (!last || !last.feedback || !last.painAfter) return null;
+
+  const fb = FEEDBACK_META[last.feedback];
+  const pain = PAIN_EMOJIS[last.painAfter - 1];
+  const dateLabel = last.date ? formatDisplayDate(last.date) : `Day ${last.day}`;
+
+  return (
+    <div className={styles.checkinLogCard}>
+      <h2 className={styles.checkinLogTitle}>Yesterday's check-in</h2>
+      <div className={styles.checkinLogRow}>
+        <div className={styles.checkinLogItem}>
+          <span className={styles.checkinLogEmoji}>{fb.emoji}</span>
+          <span className={styles.checkinLogLabel}>{fb.label}</span>
+        </div>
+        <div className={styles.checkinLogItem}>
+          <span className={styles.checkinLogEmoji}>{pain.emoji}</span>
+          <span className={styles.checkinLogLabel}>{pain.label}</span>
+        </div>
+      </div>
+      <p className={styles.checkinLogMeta}>Day {last.day} · {dateLabel}</p>
     </div>
   );
 }
