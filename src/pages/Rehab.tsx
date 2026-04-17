@@ -112,7 +112,7 @@ export default function Rehab() {
           ? renderNoProgram(handleStart, program)
           : program.paused
             ? renderPaused(handleResume, handleAbandon)
-            : renderActive(program, handleStartSession, handleCheckin)}
+            : renderActive(program, today, handleStartSession, handleCheckin)}
 
         {program && program.active && !program.paused && renderLastCheckin(program)}
 
@@ -162,20 +162,32 @@ function renderPaused(onResume: () => void, onAbandon: () => void) {
 
 function renderActive(
   program: RehabProgram,
+  today: string,
   onStartSession: (day: RehabDay) => void,
   onCheckin: () => void,
 ) {
   const day = program.days[program.currentDay - 1];
 
-  // Check-in pending: the day's session has been completed but no feedback
-  // submitted yet. The check-in gates the next day's exercise prescription,
-  // so we surface it as the primary action.
+  // Session done, check-in pending. The check-in should only become available
+  // on a later calendar day — the user sleeps on it and logs how they feel
+  // the next morning, which then picks the right exercises for that day.
   if (day.sessionDone && !day.completed) {
+    const sameDay = day.sessionDate === today;
+    if (sameDay) {
+      return (
+        <div className={styles.todayCard}>
+          <p className={styles.reason}>
+            ✓ Day {day.day} done — nice work. Come back tomorrow to log a
+            check-in and we'll pick the right exercises for day {day.day + 1}.
+          </p>
+        </div>
+      );
+    }
     return (
       <div className={styles.todayCard}>
         <p className={styles.reason}>
-          Nice work — day {day.day}'s session is done. A quick check-in will pick
-          the right exercises for day {day.day + 1}.
+          How are you feeling today? A quick check-in picks the right
+          exercises for day {day.day + 1}.
         </p>
         <button className={styles.startBtn} onClick={onCheckin}>
           Log today's check-in
