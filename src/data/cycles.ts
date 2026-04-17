@@ -82,3 +82,20 @@ export function getQuickStartPreset(hour: number): CyclePreset {
   if (hour >= 10 && hour < 18) return PRESETS.find(p => p.id === 'anytime')!;
   return PRESETS.find(p => p.id === 'evening')!;
 }
+
+export type Phase = 'relief' | 'loading' | 'strengthening';
+
+export const PHASE_POOLS: Record<Phase, string[]> = {
+  relief: [
+    'toe-extension', 'towel-stretch', 'calf-straight', 'calf-bent',
+    'ankle-circles', 'ankle-alphabet', 'tennis-ball-roll', 'bottle-roll', 'knee-to-wall',
+  ],
+  loading: [
+    'toe-extension', 'calf-straight', 'calf-bent', 'knee-to-wall',
+    'short-foot', 'toe-scrunch', 'heel-raise', 'toe-spread', 'ankle-alphabet',
+  ],
+  strengthening: [
+    'calf-straight', 'calf-bent', 'knee-to-wall', 'short-foot',
+    'standing-heel-raise', 'eccentric-heel-drop', 'marble-pickups', 'clamshell', 'toe-spread',
+  ],
+};

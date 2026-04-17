@@ -6,20 +6,15 @@ import { toLocalDateStr, computeStreaks, computeThisWeek } from '../utils/statsU
 import { getTodayPain, savePainEntry } from '../utils/painLog';
 import { loadHistory } from '../utils/history';
 import { recommendCycle } from '../utils/recommendations';
+import { PAIN_EMOJIS } from '../data/pain';
+import { loadProgram, PROGRAM_DAYS } from '../utils/rehabProgram';
 import styles from './Home.module.css';
-
-const PAIN_EMOJIS = [
-  { level: 1, emoji: '😌', label: 'No pain' },
-  { level: 2, emoji: '😐', label: 'Mild pain' },
-  { level: 3, emoji: '😬', label: 'Moderate pain' },
-  { level: 4, emoji: '😣', label: 'Quite painful' },
-  { level: 5, emoji: '😭', label: 'Severe pain' },
-];
 
 export default function Home() {
   const [todayPain, setTodayPain] = useState<number | null>(null);
   const [streak, setStreak] = useState(0);
   const [weeklyCount, setWeeklyCount] = useState(0);
+  const [rehabDay, setRehabDay] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +23,10 @@ export default function Home() {
     const history = loadHistory();
     setStreak(computeStreaks(history, today).current);
     setWeeklyCount(computeThisWeek(history, today).done);
+    const program = loadProgram();
+    if (program && program.active && !program.paused) {
+      setRehabDay(program.currentDay);
+    }
   }, []);
 
   function handlePainSelect(level: number) {
@@ -92,6 +91,19 @@ export default function Home() {
             </div>
           )}
         </div>
+
+        {rehabDay !== null && (
+          <button
+            className={styles.rehabBanner}
+            onClick={() => navigate('/rehab')}
+          >
+            <span className={styles.rehabBannerIcon}>🦶</span>
+            <span className={styles.rehabBannerText}>
+              <strong>Rehab program</strong> — Day {rehabDay} of {PROGRAM_DAYS}
+            </span>
+            <span className={styles.rehabBannerArrow}>→</span>
+          </button>
+        )}
 
         <div className={styles.quickStartCard}>
           <div className={styles.quickStartLeft}>

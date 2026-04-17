@@ -1,0 +1,412 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--bg);
+}
+
+.header {
+  padding: 48px 24px 20px;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.title {
+  color: var(--text);
+  line-height: 1.1;
+  margin: 0 0 6px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.content {
+  flex: 1;
+  padding: 4px 20px 100px;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hero {
+  background: var(--surface);
+  border: 1.5px solid var(--sage);
+  border-radius: 24px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: center;
+}
+
+.heroEmoji {
+  font-size: 44px;
+  line-height: 1;
+}
+
+.heroTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.heroSub {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.todayCard {
+  background: var(--surface);
+  border: 1.5px solid var(--sage);
+  border-radius: 24px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dayLine {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dayLabel {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.phaseBadge {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 3px 10px;
+  border-radius: 50px;
+}
+
+.phaseRelief {
+  color: #2B6A49;
+  background: #EFF5F1;
+}
+
+.phaseLoading {
+  color: #2E5F96;
+  background: #EDF2F7;
+}
+
+.phaseStrengthening {
+  color: #8B5E33;
+  background: #F7F1EB;
+}
+
+.liteBadge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 3px 10px;
+  border-radius: 50px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.reason {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.exList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.exItem {
+  font-size: 14px;
+  color: var(--text);
+  padding: 6px 10px;
+  background: var(--bg);
+  border-radius: 10px;
+}
+
+.startBtn {
+  background: var(--sage);
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 16px 32px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  font-family: inherit;
+}
+
+.startBtn:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+.banner {
+  background: var(--warning-bg);
+  color: #7A6000;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.bannerDone {
+  background: #EFF5F1;
+  color: #2B6A49;
+  border-radius: 16px;
+  padding: 14px 16px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.bannerBtn {
+  background: var(--sage);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.bannerBtn:active {
+  transform: scale(0.97);
+}
+
+.checkinLogCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checkinLogTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.checkinLogRow {
+  display: flex;
+  gap: 24px;
+}
+
+.checkinLogItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkinLogEmoji {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.checkinLogLabel {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.checkinLogMeta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.gridCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 20px;
+}
+
+.gridTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 14px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.dot {
+  aspect-ratio: 1;
+  width: 100%;
+  border-radius: 6px;
+  background: #ede9e4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: background 0.15s;
+}
+
+.dotRelief {
+  background: #b8d4c0;
+  color: #2B6A49;
+}
+
+.dotLoading {
+  background: var(--sage);
+  color: #FFFFFF;
+}
+
+.dotStrengthening {
+  background: #4e8c66;
+  color: #FFFFFF;
+}
+
+.dotToday {
+  outline: 2px solid var(--blush);
+  outline-offset: 1px;
+}
+
+.dotCompleted::after {
+  content: '✓';
+  font-size: 12px;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legendSwatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.footerLink {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 10px;
+  font-family: inherit;
+  text-align: center;
+}
+
+.footerLink:active {
+  color: var(--error);
+}
+
+.pausedCard {
+  background: var(--warning-bg);
+  border: 1px solid #F0DFAA;
+  border-radius: 24px;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pausedTitle {
+  font-size: 17px;
+  font-weight: 600;
+  color: #7A6000;
+  margin: 0;
+}
+
+.pausedSub {
+  font-size: 14px;
+  color: #7A6000;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.pausedBtns {
+  display: flex;
+  gap: 10px;
+}
+
+.btnOutline {
+  background: transparent;
+  color: var(--sage-text);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 50px;
+  border: 2px solid var(--sage);
+  cursor: pointer;
+  flex: 1;
+  font-family: inherit;
+}
+
+.btnOutline:active {
+  transform: scale(0.97);
+  background: rgba(123, 175, 142, 0.08);
+}
+
+.btnDanger {
+  background: transparent;
+  color: var(--error);
+  font-size: 15px;
+  font-weight: 500;
+  padding: 12px 20px;
+  border-radius: 50px;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  flex: 1;
+  font-family: inherit;
+}

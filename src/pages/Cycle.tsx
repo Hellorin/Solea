@@ -7,6 +7,8 @@ import { exercises as allExercises } from '../data/exercises';
 import type { Exercise, Category } from '../data/exercises';
 import { saveSession } from '../utils/history';
 import { loadCustomCycles, deleteCustomCycle, renameCustomCycle } from '../utils/customCycles';
+import { loadProgram, saveProgram, markSessionDone } from '../utils/rehabProgram';
+import { toLocalDateStr } from '../utils/statsUtils';
 import styles from './Cycle.module.css';
 
 type View = 'pick' | 'quick-pick' | 'equipment' | 'running' | 'done';
@@ -126,7 +128,31 @@ export default function Cycle() {
   }, []);
 
   useEffect(() => {
-    const id = (location.state as { quickStart?: string } | null)?.quickStart;
+    const state = location.state as {
+      quickStart?: string;
+      prescribedIds?: string[];
+      prescribedLabel?: string;
+      prescribedEmoji?: string;
+      fromRehab?: boolean;
+    } | null;
+    if (state?.prescribedIds && state.prescribedIds.length > 0) {
+      setQuickExerciseIds(state.prescribedIds);
+      setActiveCycle(null);
+      setCurrentIndex(0);
+      setTotalSecs(0);
+      setExSecs(0);
+      setReady(false);
+      setPaused(false);
+      const exList = allExercises.filter(e => state.prescribedIds!.includes(e.id));
+      const equipment = getUniqueEquipment(exList);
+      if (equipment.length > 0) setView('equipment');
+      else {
+        setView('running');
+        startTick();
+      }
+      return;
+    }
+    const id = state?.quickStart;
     if (id) {
       const preset = PRESETS.find(p => p.id === id);
       if (preset) handleStart(preset);
@@ -173,6 +199,15 @@ export default function Cycle() {
   function finishCycle() {
     pauseTick();
     saveSession(totalSecs, list.map(e => e.name));
+    const fromRehab = (location.state as { fromRehab?: boolean } | null)?.fromRehab;
+    if (fromRehab) {
+      const program = loadProgram();
+      if (program && program.active) {
+        saveProgram(markSessionDone(program, toLocalDateStr(new Date())));
+      }
+      navigate('/rehab');
+      return;
+    }
     setView('done');
   }
 
