@@ -42,6 +42,8 @@ Solea was built this way. The entire app — exercise library, reminders, guided
 
 **Daily pain check-in** — log how your foot feels each day using a 1–5 emoji scale, right from the home screen. Feeds into a trend chart on the Progress page so you can see whether the routine is actually helping.
 
+**30-day rehab program** — an adaptive structured program that builds through three phases (pain relief → loading → strengthening). Answer two questions to start, then do a brief daily check-in after each session so the app can pick the right exercises for the next day. The program pauses automatically if you miss two or more days in a row and resumes where you left off.
+
 **Progress tracking** — streak counter, a 30-day activity heatmap, and a session history log that shows which exercises you did each time. Motivation without gamification nonsense.
 
 **Installable PWA** — add it to your phone's home screen. Works offline. Screen stays awake during active sessions. No app store, no install size, no permissions you didn't ask for.
