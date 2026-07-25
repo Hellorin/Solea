@@ -1,5 +1,19 @@
 # Solea — Plantar Fasciitis Recovery App
 
+**Quality:**
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Solea&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Solea)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Solea&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Solea)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Solea&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Solea)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Solea&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Solea)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Solea&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Solea)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=Solea&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=Solea)
+
+**Codebase:**
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Solea&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Solea)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Solea&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Solea)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=Solea&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=Solea)
+
+
 > A free, no-nonsense PWA for daily plantar fascia stretching. No subscriptions. No ads. No bloat. Just the exercises you need.
 
 ---
