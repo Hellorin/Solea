@@ -48,3 +48,9 @@ lerna-debug.log*
 
 # Playwright screenshots
 .playwright-mcp/
+
+# Test coverage
+coverage/
+
+# SonarQube
+.scannerwork/
