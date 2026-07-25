@@ -3,6 +3,7 @@ import {
   loadCustomCycles,
   saveCustomCycle,
   deleteCustomCycle,
+  renameCustomCycle,
   sortByPTProtocol,
 } from '../utils/customCycles';
 import type { CustomCycle } from '../data/cycles';
@@ -82,6 +83,30 @@ describe('deleteCustomCycle', () => {
     saveCustomCycle(makeCycle('1'));
     deleteCustomCycle('nonexistent');
     expect(loadCustomCycles()).toHaveLength(1);
+  });
+});
+
+describe('renameCustomCycle', () => {
+  it('renames the cycle with the matching id', () => {
+    saveCustomCycle(makeCycle('1', 'Old name'));
+    renameCustomCycle('1', 'New name');
+    const all = loadCustomCycles();
+    expect(all).toHaveLength(1);
+    expect(all[0].label).toBe('New name');
+  });
+
+  it('leaves other cycles untouched', () => {
+    saveCustomCycle(makeCycle('1', 'A'));
+    saveCustomCycle(makeCycle('2', 'B'));
+    renameCustomCycle('1', 'A renamed');
+    const all = loadCustomCycles();
+    expect(all.find(c => c.id === '2')?.label).toBe('B');
+  });
+
+  it('is a no-op when id not found', () => {
+    saveCustomCycle(makeCycle('1', 'A'));
+    renameCustomCycle('nonexistent', 'X');
+    expect(loadCustomCycles()[0].label).toBe('A');
   });
 });
 
